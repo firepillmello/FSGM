@@ -1304,3 +1304,584 @@ footer .eyebrow {
     grid-column: auto;
   }
 }
+
+/* A more substantial editorial type system and original letter-art identity. */
+:root {
+  --serif: "Source Serif 4", Georgia, serif;
+  --muted: #424f45;
+  --glass-surface: rgba(255, 254, 249, 0.83);
+}
+body {
+  font-weight: 400;
+  color: #28382e;
+}
+h1,
+h2,
+h3 {
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+h1 {
+  line-height: 1.16;
+}
+h2 {
+  line-height: 1.24;
+}
+h3 {
+  line-height: 1.35;
+  letter-spacing: -0.025em;
+}
+em {
+  color: #4e684e;
+  font-weight: 500;
+}
+p {
+  font-weight: 500;
+}
+.hero-copy h1 {
+  font-size: clamp(44px, 4.35vw, 64px);
+  line-height: 1.16;
+  letter-spacing: -0.045em;
+}
+.hero-copy > p:not(.eyebrow) {
+  font-size: 17px;
+  line-height: 1.9;
+}
+.section-heading > p:last-child:not(.eyebrow) {
+  font-size: 17px;
+}
+.eyebrow {
+  font-weight: 600;
+  color: #415d43;
+}
+.button,
+.text-link,
+.quiet-link {
+  font-weight: 600;
+}
+.button {
+  font-size: 14px;
+}
+.text-link,
+.quiet-link {
+  font-size: 14px;
+}
+nav > a:not(.button) {
+  font-weight: 500;
+  font-size: 13px;
+}
+nav .button {
+  font-size: 12px;
+}
+.hero-note,
+.footer-location {
+  font-size: 12px;
+}
+.principle-strip {
+  color: #4d6345;
+  font-weight: 600;
+}
+.service-card h3 {
+  font-size: 27px;
+}
+.service-card p,
+.industry-card p,
+.advantages p,
+.approach p,
+.resource-card > p:not(.eyebrow),
+.education-feature p:not(.eyebrow) {
+  font-size: 16px;
+  line-height: 1.85;
+}
+.service-card .text-link,
+.resource-card .text-link {
+  font-size: 13px;
+}
+.resource-card h3,
+.industry-card h3 {
+  font-size: 27px;
+}
+.advantages h3 {
+  font-size: 26px;
+}
+.approach h3 {
+  font-size: 28px;
+}
+.section-heading h2,
+.split-intro h2 {
+  font-size: clamp(34px, 3.2vw, 46px);
+}
+.education-feature h2 {
+  font-size: 37px;
+}
+.cta h2 {
+  font-size: 43px;
+}
+.page-hero h1 {
+  font-size: clamp(43px, 4.7vw, 66px);
+  line-height: 1.18;
+}
+.intro {
+  font-size: 18px;
+}
+.service-detail-title h2 {
+  font-size: 39px;
+}
+.industry-details h2 {
+  font-size: 40px;
+}
+.article-page h1 {
+  font-size: clamp(40px, 4.6vw, 62px);
+  line-height: 1.2;
+}
+.article-body h2 {
+  font-size: 32px;
+}
+.article-body p {
+  font-size: 18px;
+  line-height: 1.95;
+}
+.article-intro {
+  font-size: 20px;
+}
+.contact-layout aside h2 {
+  font-size: 39px;
+}
+.preview-notice strong,
+.form-grid label {
+  font-size: 14px;
+  font-weight: 600;
+}
+.preview-notice p,
+.small-note,
+.privacy-note,
+.education-notice {
+  font-weight: 400;
+}
+.contact-promise p {
+  font-size: 15px;
+}
+.logo {
+  gap: 13px;
+  color: #2d4434;
+}
+.logo .lettermark {
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+  color: #3e5744;
+  stroke: currentColor;
+  stroke-width: 2.8;
+  stroke-linecap: square;
+  stroke-linejoin: round;
+  border-radius: 10px;
+  background: #fffdf78c;
+  box-shadow: 0 4px 14px -10px #28452e70;
+  transition:
+    background 0.25s,
+    box-shadow 0.25s,
+    color 0.25s;
+}
+.lettermark-frame {
+  stroke-width: 1.1;
+  opacity: 0.65;
+}
+.logo strong {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 28px;
+  letter-spacing: -0.5px;
+  line-height: 1.25;
+}
+.logo strong > span {
+  font-size: 23px;
+  font-weight: 500;
+}
+.logo small {
+  font-size: 7.5px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  margin-top: 5px;
+  line-height: 1.5;
+}
+.logo.light {
+  color: #f4f5e9;
+}
+.logo.light .lettermark {
+  color: #d7e5c8;
+  background: #dce9cb0d;
+}
+.logo.light small {
+  color: #d1dbc8;
+}
+.logo:is(:hover, :focus-visible) .lettermark {
+  color: #284f30;
+  background: #fffdf9;
+  box-shadow: 0 8px 20px -11px #28452e70;
+}
+.logo.light:is(:hover, :focus-visible) .lettermark {
+  color: #edf3df;
+  background: #dce9cb20;
+}
+
+/* Glass has solid tonal support, so text never depends on blur for contrast. */
+.service-card,
+.resource-card,
+.contact-form,
+.advantages,
+.values-grid > div {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 252, 0.94),
+    rgba(248, 250, 241, 0.66)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.96);
+  box-shadow:
+    0 1px 0 #fff inset,
+    0 0 0 1px #6e855410,
+    0 18px 45px -32px #354a3270;
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+}
+.visual-seal {
+  background: #f7fbf0c9;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 17px;
+}
+.industry-card {
+  padding: 28px;
+  border: 1px solid #d5dfce;
+  border-radius: 12px;
+  background: #fffcf552;
+}
+.service-card,
+.resource-card,
+.industry-card,
+.values-grid > div {
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.button {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+.button svg,
+.text-link svg,
+.quiet-link svg,
+.industry-card > svg:last-child {
+  transition: transform 0.2s ease;
+}
+nav > a:not(.button)::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #4b6a45;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
+}
+nav > a.active:not(.button)::after,
+nav > a:focus-visible:not(.button)::after {
+  transform: scaleX(1);
+}
+.text-link,
+.quiet-link {
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+.form-grid input,
+.form-grid textarea,
+.form-grid select {
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    background 0.2s;
+}
+.form-grid :is(input, textarea, select):focus-visible {
+  background: #fffef9;
+  border-color: #4c704c;
+  box-shadow: 0 0 0 4px #8ca47b20;
+}
+.service-card:focus-visible,
+.resource-card:focus-visible,
+.industry-card:focus-visible {
+  transform: translateY(-4px);
+  background: #fffef8;
+  border-color: #718d66;
+  box-shadow:
+    0 20px 45px -25px #354a3259,
+    0 1px 0 #fff inset;
+}
+@media (hover: hover) and (pointer: fine) {
+  .service-card:hover,
+  .resource-card:hover,
+  .industry-card:hover,
+  .values-grid > div:hover {
+    transform: translateY(-5px);
+    background: #fffef8;
+    border-color: #a0b38e;
+    box-shadow:
+      0 25px 45px -28px #354a3266,
+      0 1px 0 #fff inset;
+  }
+  .button:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 9px 24px -12px #1e382b99,
+      0 1px 0 #ffffff30 inset;
+  }
+  .button:hover svg,
+  .service-card:hover .text-link svg,
+  .resource-card:hover .text-link svg,
+  .text-link:hover svg,
+  .quiet-link:hover svg,
+  .industry-card:hover > svg:last-child {
+    transform: translate(3px, -3px);
+  }
+  nav > a:hover:not(.button)::after {
+    transform: scaleX(1);
+  }
+  .footer-top > div:nth-child(2) > a:hover {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 6px;
+  }
+}
+@media (hover: none) {
+  .service-card:hover,
+  .resource-card:hover,
+  .industry-card:hover,
+  .button:hover,
+  .resource-card:hover .paper {
+    transform: none;
+  }
+}
+@media (max-width: 1190px) {
+  nav {
+    gap: 14px;
+  }
+  nav > a:not(.button) {
+    font-size: 12px;
+  }
+  nav .button {
+    font-size: 11px;
+    padding-inline: 12px;
+  }
+  .logo strong {
+    font-size: 25px;
+  }
+  .logo strong > span {
+    font-size: 21px;
+  }
+  .logo small {
+    font-size: 6.7px;
+  }
+  .logo .lettermark {
+    width: 49px;
+    height: 49px;
+  }
+}
+@media (max-width: 1050px) {
+  nav > a:not(.button) {
+    font-size: 16px;
+  }
+  nav .button {
+    font-size: 14px;
+  }
+  .hero-copy h1 {
+    font-size: 46px;
+  }
+  .hero-copy > p:not(.eyebrow) {
+    font-size: 16px;
+  }
+  .service-card h3,
+  .resource-card h3 {
+    font-size: 26px;
+  }
+  .education-feature h2 {
+    font-size: 34px;
+  }
+  .industry-card {
+    padding: 26px;
+  }
+}
+@media (max-width: 760px) {
+  .hero-copy h1 {
+    font-size: clamp(39px, 7.4vw, 54px);
+    line-height: 1.18;
+  }
+  .hero-copy > p:not(.eyebrow) {
+    font-size: 17px;
+  }
+  .section-heading h2,
+  .split-intro h2,
+  .why-grid h2 {
+    font-size: 36px;
+  }
+  .service-card h3,
+  .resource-card h3,
+  .industry-card h3 {
+    font-size: 28px;
+  }
+  .service-card p,
+  .resource-card > p:not(.eyebrow) {
+    font-size: 16px;
+  }
+  .advantages h3 {
+    font-size: 25px;
+  }
+  .advantages p,
+  .approach p {
+    font-size: 16px;
+  }
+  .education-feature h2,
+  .cta h2 {
+    font-size: 35px;
+  }
+  .page-hero h1 {
+    font-size: clamp(38px, 7vw, 51px);
+  }
+  .service-detail-title h2,
+  .industry-details h2 {
+    font-size: 35px;
+  }
+  .article-page h1 {
+    font-size: clamp(36px, 7vw, 48px);
+  }
+  .article-body h2 {
+    font-size: 30px;
+  }
+  .article-body p {
+    font-size: 18px;
+  }
+  .article-intro {
+    font-size: 19px;
+  }
+  .contact-layout aside h2 {
+    font-size: 35px;
+  }
+  .capacity-note h2 {
+    font-size: 31px;
+  }
+  .footer-note h3 {
+    font-size: 26px;
+  }
+}
+@media (max-width: 480px) {
+  .logo {
+    gap: 10px;
+  }
+  .logo .lettermark {
+    width: 43px;
+    height: 43px;
+  }
+  .logo strong {
+    font-size: 23px;
+  }
+  .logo strong > span {
+    font-size: 19px;
+  }
+  .logo small {
+    font-size: 6px;
+    letter-spacing: 0.55px;
+  }
+  .menu-button {
+    padding: 8px;
+    min-width: 42px;
+  }
+  .nav-shell {
+    gap: 10px;
+  }
+  .industry-card {
+    padding: 25px;
+  }
+  .service-card {
+    padding: 28px;
+  }
+  .approach {
+    grid-template-columns: 1fr;
+  }
+  .step-number {
+    font-size: 36px;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+  }
+  .hero-copy .eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.8px;
+  }
+  .footer-top .logo .lettermark {
+    width: 50px;
+    height: 50px;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .service-card,
+  .resource-card,
+  .contact-form,
+  .advantages,
+  .values-grid > div,
+  .visual-seal,
+  .industry-card {
+    background: #f8f8f0;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .service-card:hover,
+  .resource-card:hover,
+  .industry-card:hover,
+  .button:hover,
+  .values-grid > div:hover,
+  .service-card:focus-visible,
+  .resource-card:focus-visible,
+  .industry-card:focus-visible {
+    transform: none;
+  }
+}
+/* Give longer, heavier headings enough room at intermediate widths. */
+.values-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.values-grid > div,
+.industry-grid > *,
+.resource-grid > *,
+.service-grid > * {
+  min-width: 0;
+}
+@media (max-width: 1050px) {
+  .values-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 480px) {
+  .values-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* Interactive cards own their transform; scroll reveals must not mask hovering. */
+.service-card.reveal {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .button:hover svg,
+  .text-link:hover svg,
+  .quiet-link:hover svg,
+  .service-card:hover .text-link svg,
+  .resource-card:hover .text-link svg,
+  .industry-card:hover > svg:last-child,
+  .resource-card:hover .paper {
+    transform: none;
+  }
+}

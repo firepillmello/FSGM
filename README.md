@@ -21,32 +21,24 @@ Default local project path: `/FSGM/`. Navigation uses hash routes, so article li
 - `src/main.tsx`: reusable components, pages, form behavior, route metadata.
 - `src/styles.css`: base layout and component styles.
 - `src/premium.css`: glass surfaces, fine texture, refined typography and spacing, responsive refinements, and reduced-transparency support.
-- `public/favicon.svg`: original brand mark.
+- `public/brandmark.svg`: original FSGM letter-art mark.
+- `public/favicon.svg`: matching high-contrast favicon.
 
 The form defaults to **preview mode**: entries are validated in-browser and are never sent or saved. To activate production inquiries, configure `site.formEndpoint` with a real HTTPS form service accepting multipart POST and JSON responses, confirm its CORS/spam protection and privacy terms, update the privacy copy, and test delivery. Set `site.schedulingUrl` only to a verified scheduling link. Do not request sensitive documents in this public form.
 
 ## GitHub Pages
 
-The supplied checkout remote is `firepillmello/FSGM`. The requested new repository name is `fsgm-advisory-website`; this project does not rename or create remote repositories automatically.
+The website is maintained in `firepillmello/FSGM` on `main`.
 
-1. Push the project to `main` in the chosen GitHub repository.
-   If using the requested new repository, create `firepillmello/fsgm-advisory-website` in GitHub first, then run from this checkout:
+1. In repository **Settings → Pages → Build and deployment**, select **GitHub Actions**.
+2. Open Actions and monitor **Deploy FSGM Advisory to GitHub Pages**. It runs on every push to `main` or manually.
+3. Open the URL reported by the successful deployment: the expected project URL is `https://firepillmello.github.io/FSGM/`.
 
-   ```sh
-   git remote add advisory https://github.com/firepillmello/fsgm-advisory-website.git
-   git push advisory main
-   ```
+A successful push is not proof that Pages deployment has completed. Check the deployment job before claiming a new version is live.
 
-2. In repository **Settings → Pages → Build and deployment**, select **GitHub Actions**.
-3. Open Actions and monitor **Deploy FSGM Advisory to GitHub Pages**. It runs on every push to `main` or manually.
-4. Open the URL reported by the successful deployment.
+The workflow derives `BASE_PATH` and `SITE_URL` from the repository identity, so a future repository rename does not require hardcoded deployment changes.
 
-The workflow derives both `BASE_PATH` and `SITE_URL` from the repository identity. It therefore supports either:
-
-- Current repository: `https://firepillmello.github.io/FSGM/`
-- Requested name, if created/renamed under the same owner: `https://firepillmello.github.io/fsgm-advisory-website/`
-
-These are expected URLs, not claims of a live deployment. For a manual build targeting the requested name:
+For a manual build targeting an alternative repository name:
 
 ```sh
 BASE_PATH=/fsgm-advisory-website/ SITE_URL=https://firepillmello.github.io/fsgm-advisory-website/ npm run build
@@ -64,7 +56,7 @@ npm test
 CHROMIUM_PATH=/usr/bin/chromium npm test
 ```
 
-Browser tests cover navigation, resource filtering, article deep links and refresh, form validation and transparent demo confirmation, keyboard access, mobile menu, and missing pages. A 98-case layout sweep checks seven page types at 14 widths from 320px to 1920px for overflow, header collisions, offscreen controls, and faded content. Tests start a Vite server automatically. No private data is used.
+Browser tests cover navigation, resource filtering, article deep links and refresh, form validation and transparent demo confirmation, keyboard access, hover feedback, reduced-motion behavior, mobile menu, and missing pages. A 98-case layout sweep checks seven page types at 14 widths from 320px to 1920px for overflow, header collisions, offscreen controls, and faded content. Tests start a Vite server automatically. No private data is used.
 
 ## Search indexing
 

@@ -51,8 +51,26 @@ function Logo({ light = false }: { light?: boolean }) {
       to="/"
       aria-label="FSGM Advisory home"
     >
-      <Landmark size={37} strokeWidth={1.1} />
-      <span>
+      <svg
+        className="lettermark"
+        viewBox="0 0 80 80"
+        fill="none"
+        aria-hidden="true"
+      >
+        <rect
+          className="lettermark-frame"
+          x="3"
+          y="3"
+          width="74"
+          height="74"
+          rx="12"
+        />
+        <path d="M18 34V17H33M18 25H30" />
+        <path d="M61 18H50C44 18 44 26 50 26H56C62 26 62 34 56 34H45" />
+        <path d="M33 49C28 44 17 46 17 57C17 68 29 69 34 63V57H26" />
+        <path d="M46 66V47L54 58L63 47V66" />
+      </svg>
+      <span className="logo-wordmark">
         <strong>
           FSGM<span> Advisory</span>
         </strong>

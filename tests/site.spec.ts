@@ -171,3 +171,26 @@ test("page layouts remain readable across mobile, tablet, and desktop breakpoint
     }
   }
 });
+
+test("service cards respond to hovering and respect reduced motion", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("./");
+  const card = page.locator(".service-card").first();
+  await card.scrollIntoViewIfNeeded();
+  await page.mouse.move(4, 500);
+  const documentTop = () =>
+    card.evaluate(
+      (element) => element.getBoundingClientRect().top + window.scrollY,
+    );
+  const initialTop = await documentTop();
+  await card.hover();
+  await expect.poll(documentTop).toBeLessThan(initialTop - 1);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect.poll(documentTop).toBeCloseTo(initialTop, 0);
+  await card.click();
+  await expect(
+    page.getByRole("heading", { name: "Grant Budget Management", exact: true }),
+  ).toBeVisible();
+});
