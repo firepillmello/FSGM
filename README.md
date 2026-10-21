@@ -19,7 +19,8 @@ Default local project path: `/FSGM/`. Navigation uses hash routes, so article li
 
 - `src/content.ts`: verified business information, contact channels, scheduling URL, navigation, services, industries, and articles. Blank contact values remain hidden. Do not invent credentials, biographies, or contact details.
 - `src/main.tsx`: reusable components, pages, form behavior, route metadata.
-- `src/styles.css`: responsive design, palette, typography, reduced-motion behavior.
+- `src/styles.css`: base layout and component styles.
+- `src/premium.css`: glass surfaces, fine texture, refined typography and spacing, responsive refinements, and reduced-transparency support.
 - `public/favicon.svg`: original brand mark.
 
 The form defaults to **preview mode**: entries are validated in-browser and are never sent or saved. To activate production inquiries, configure `site.formEndpoint` with a real HTTPS form service accepting multipart POST and JSON responses, confirm its CORS/spam protection and privacy terms, update the privacy copy, and test delivery. Set `site.schedulingUrl` only to a verified scheduling link. Do not request sensitive documents in this public form.
@@ -63,7 +64,7 @@ npm test
 CHROMIUM_PATH=/usr/bin/chromium npm test
 ```
 
-Browser tests cover navigation, resource filtering, article deep links and refresh, form validation and transparent demo confirmation, mobile menu, overflow, and missing pages. Tests start a Vite server automatically. No private data is used.
+Browser tests cover navigation, resource filtering, article deep links and refresh, form validation and transparent demo confirmation, keyboard access, mobile menu, and missing pages. A 98-case layout sweep checks seven page types at 14 widths from 320px to 1920px for overflow, header collisions, offscreen controls, and faded content. Tests start a Vite server automatically. No private data is used.
 
 ## Search indexing
 
