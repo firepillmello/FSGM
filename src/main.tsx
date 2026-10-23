@@ -15,7 +15,6 @@ import {
   Menu,
   X,
   Landmark,
-  Files,
   ShieldCheck,
   Sprout,
   HeartHandshake,
@@ -32,9 +31,7 @@ import {
   articles,
   guidanceNotice,
 } from "./content";
-import "./styles.css";
-import "./premium.css";
-import "./organization.css";
+import "./site.css";
 import { ServicesRail } from "./ServicesRail";
 function Logo({ light = false }: { light?: boolean }) {
   return (
@@ -89,22 +86,28 @@ function Button({
 }
 function Header() {
   const [open, setOpen] = useState(false);
-  const dropdown = useRef<HTMLDetailsElement>(null);
+  const servicesDropdown = useRef<HTMLDetailsElement>(null);
+  const audiencesDropdown = useRef<HTMLDetailsElement>(null);
   const location = useLocation();
   useEffect(() => {
     setOpen(false);
-    if (dropdown.current) dropdown.current.open = false;
+    if (servicesDropdown.current) servicesDropdown.current.open = false;
+    if (audiencesDropdown.current) audiencesDropdown.current.open = false;
   }, [location]);
   useEffect(() => {
     const closeOutside = (event: PointerEvent) => {
-      if (dropdown.current && !dropdown.current.contains(event.target as Node))
-        dropdown.current.open = false;
+      for (const ref of [servicesDropdown, audiencesDropdown])
+        if (ref.current && !ref.current.contains(event.target as Node))
+          ref.current.open = false;
     };
     const escape = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
-      if (dropdown.current?.open) {
-        dropdown.current.open = false;
-        dropdown.current.querySelector("summary")?.focus();
+      const expanded = [servicesDropdown, audiencesDropdown].find(
+        (ref) => ref.current?.open,
+      )?.current;
+      if (expanded) {
+        expanded.open = false;
+        expanded.querySelector("summary")?.focus();
       } else if (open) {
         setOpen(false);
         document.querySelector<HTMLButtonElement>(".menu-button")?.focus();
@@ -136,39 +139,71 @@ function Header() {
           className={open ? "open" : ""}
           aria-label="Main navigation"
         >
-          {site.navigation.map(([label, path]) =>
-            label === "Services" ? (
-              <details className="services-dropdown" ref={dropdown} key={label}>
-                <summary
-                  className={current.startsWith("#service") ? "active" : ""}
+          {site.navigation.map(([label, path]) => {
+            if (label !== "Services" && label !== "Who We Serve")
+              return (
+                <Link
+                  key={path}
+                  to={path}
+                  aria-current={
+                    current === path.slice(1) ? "location" : undefined
+                  }
                 >
-                  Services <ChevronDown size={15} />
+                  {label}
+                </Link>
+              );
+            const isServices = label === "Services";
+            const ref = isServices ? servicesDropdown : audiencesDropdown;
+            const other = isServices ? audiencesDropdown : servicesDropdown;
+            const items = isServices ? services : industries;
+            const prefix = isServices ? "service" : "industry";
+            return (
+              <details
+                key={label}
+                ref={ref}
+                className={`nav-dropdown ${isServices ? "services-dropdown" : "audiences-dropdown"}`}
+                onToggle={(event) => {
+                  if (event.currentTarget.open && other.current)
+                    other.current.open = false;
+                }}
+              >
+                <summary
+                  className={
+                    current.startsWith(`#${prefix}`) ||
+                    current === path.slice(1)
+                      ? "active"
+                      : ""
+                  }
+                >
+                  {label}
+                  <ChevronDown size={15} />
                 </summary>
-                <div className="services-menu">
-                  <Link className="services-menu-overview" to="/#services">
-                    Explore all services <ArrowRight size={16} />
+                <div className="dropdown-menu services-menu">
+                  <Link className="dropdown-overview" to={path}>
+                    {isServices
+                      ? "Explore all services"
+                      : "Explore who we serve"}
+                    <ArrowRight size={16} />
                   </Link>
-                  {services.map((service, index) => (
-                    <Link key={service.title} to={`/#service-${index}`}>
+                  {items.map((item, index) => (
+                    <Link
+                      key={item.title}
+                      to={`/#${prefix}-${index}`}
+                      aria-current={
+                        current === `#${prefix}-${index}`
+                          ? "location"
+                          : undefined
+                      }
+                    >
                       <span>0{index + 1}</span>
-                      {service.title}
+                      {item.title}
                       <ArrowUpRight size={15} />
                     </Link>
                   ))}
                 </div>
               </details>
-            ) : (
-              <Link
-                key={path}
-                to={path}
-                aria-current={
-                  current === path.slice(1) ? "location" : undefined
-                }
-              >
-                {label}
-              </Link>
-            ),
-          )}
+            );
+          })}
         </nav>
       </div>
     </header>
@@ -191,42 +226,49 @@ function SectionHeading({
     </div>
   );
 }
-function ArchitecturalVisual() {
+function CommunityVisual() {
   return (
-    <div
-      className="architecture"
-      role="img"
-      aria-label="Original architectural illustration of a sunlit colonnade, symbolizing stability and stewardship"
-    >
-      <div className="sun" />
-      <div className="arch arch-back" />
-      <div className="arch arch-middle" />
-      <div className="arch arch-front" />
-      <div className="steps" />
-      <div className="visual-caption">
-        <span>GROUNDED IN PURPOSE.</span>
-        <span>BUILT ON ACCOUNTABILITY.</span>
+    <figure className="community-visual">
+      <img
+        src={`${import.meta.env.BASE_URL}images/community-river.webp`}
+        width="1536"
+        height="1024"
+        alt="Illustrative riverside community framed by wooded hills in warm morning light"
+        fetchPriority="high"
+      />
+      <div className="image-kicker">
+        <span />
+        ROOTED IN COMMUNITY
       </div>
-      <div className="visual-seal">
-        <Sprout size={23} />
-        <span>
-          Stewardship
+      <figcaption>
+        <span className="eyebrow">THE PURPOSE BEHIND EVERY DOLLAR</span>
+        <strong>
+          Strong stewardship.
           <br />
-          that matters.
+          <em>Lasting purpose.</em>
+        </strong>
+        <span className="image-caption">
+          Pennsylvania-based. Community-minded.
         </span>
-      </div>
-    </div>
+      </figcaption>
+    </figure>
   );
 }
 function IndustryCard({ index }: { index: number }) {
   const Icon = [Sprout, HeartHandshake, Building2, Users][index];
   const industry = industries[index];
+  const { hash } = useLocation();
+  const disclosure = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    if (hash.startsWith("#industry-") && disclosure.current)
+      disclosure.current.open = hash === `#industry-${index}`;
+  }, [hash, index]);
   return (
-    <article className="industry-card" id={`industry-${index}`}>
+    <article className="industry-card" id={`industry-${index}`} tabIndex={-1}>
       <Icon size={29} strokeWidth={1.2} />
       <h3>{industry.title}</h3>
       <p>{industry.text}</p>
-      <details className="inline-disclosure">
+      <details className="inline-disclosure" ref={disclosure}>
         <summary>
           Explore more<span className="sr-only"> about {industry.title}</span>
           <ChevronDown size={16} />
@@ -272,7 +314,7 @@ function Home() {
             <span className="tiny-line" /> Pennsylvania-based. Community-minded.
           </div>
         </div>
-        <ArchitecturalVisual />
+        <CommunityVisual />
       </section>
       <div className="principle-strip">
         <span>EDUCATE FIRST.</span>
@@ -282,42 +324,52 @@ function Home() {
         <span>STRENGTHEN COMMUNITIES.</span>
       </div>
       <section
-        className="container section split-intro reveal"
+        className="container section story-section"
         id="about"
         tabIndex={-1}
       >
-        <p className="eyebrow">THE PURPOSE BEHIND OUR WORK</p>
-        <div>
+        <div className="story-copy">
+          <p className="eyebrow">OUR STORY</p>
           <h2>
-            You focus on your mission.
+            Community purpose.
             <br />
-            <em>We help you protect it.</em>
+            <em>Fiscal leadership.</em>
           </h2>
-          <p>
-            Public funding creates an opportunity to serve—and a responsibility
-            to demonstrate how every dollar supports that service. Clear
-            budgets, reliable records, and timely reporting help protect both
-            your award and the trust behind it.
+          <p className="story-lead">
+            Public funding begins with a promise: services people can rely on,
+            programs that endure, and communities with a stronger future.
           </p>
           <p>
-            FSGM Advisory works alongside nonprofits and publicly funded
-            organizations to bring structure to post-award financial management.
-            From day-to-day reporting to leadership-level oversight, our support
-            is designed around your funding requirements, your team’s capacity,
-            and your mission.
+            FSGM Advisory exists because the work behind that promise deserves
+            thoughtful financial leadership. When grant budgets, documentation,
+            reimbursements, and reporting compete for attention, the purpose of
+            the funding should remain at the center of every decision.
+          </p>
+          <p>
+            Our approach brings the expertise and perspective of a Fiscal
+            Director into the everyday management of public funds—connecting
+            financial oversight with the mission it is meant to support. We want
+            that level of guidance to be accessible without requiring a
+            full-time fiscal executive.
           </p>
           <details className="inline-disclosure about-disclosure">
             <summary>
-              Explore more about us <ChevronDown size={16} />
+              Explore more about us
+              <ChevronDown size={16} />
             </summary>
             <div>
               <h3>Protecting the Purpose Behind Public Funding.</h3>
               <p>
-                Our vision is a community sector in which sound financial
-                stewardship strengthens, rather than competes with, program
-                delivery. We believe clear information, shared understanding,
-                and proportionate controls help organizations protect the
-                purpose behind public funding.
+                A Fiscal Director looks beyond a single report to understand the
+                whole financial picture: how a budget supports a program, how
+                costs are documented, how reimbursement affects cash flow, and
+                what leadership needs to know before the next decision.
+              </p>
+              <p>
+                That perspective shapes our work. We help build clear
+                responsibilities, practical controls, and financial routines
+                that strengthen accountability while allowing community work to
+                move forward.
               </p>
               <p>
                 Integrity, accountability, transparency, education, partnership,
@@ -328,17 +380,52 @@ function Home() {
             </div>
           </details>
         </div>
+        <aside className="story-aside">
+          <figure className="story-image">
+            <img
+              src={`${import.meta.env.BASE_URL}images/community-town.png`}
+              width="310"
+              height="149"
+              loading="lazy"
+              alt="Historic riverside community and a bridge surrounded by autumn trees"
+            />
+            <figcaption>
+              Community is the reason. Stewardship is the responsibility.
+            </figcaption>
+          </figure>
+          <div className="director-note">
+            <p className="eyebrow">THE FISCAL DIRECTOR PERSPECTIVE</p>
+            <h3>
+              The whole picture.
+              <br />A clearer direction.
+            </h3>
+            <p>
+              Budget oversight. Sound financial processes. Informed leadership
+              decisions. Each should serve the purpose behind the funding.
+            </p>
+            <Link className="text-link" to="/#services">
+              Explore our approach to support
+              <ArrowUpRight size={16} />
+            </Link>
+          </div>
+        </aside>
       </section>
       <ServicesRail />
-      <section className="container section" id="who-we-serve" tabIndex={-1}>
-        <SectionHeading
-          eyebrow="WHO WE SERVE"
-          title="Supporting the people who support our communities."
-        />
-        <div className="industry-grid">
-          {industries.map((_, i) => (
-            <IndustryCard key={i} index={i} />
-          ))}
+      <section
+        className="audience-section section"
+        id="who-we-serve"
+        tabIndex={-1}
+      >
+        <div className="container">
+          <SectionHeading
+            eyebrow="WHO WE SERVE"
+            title="Supporting the people who support our communities."
+          />
+          <div className="industry-grid">
+            {industries.map((_, i) => (
+              <IndustryCard key={i} index={i} />
+            ))}
+          </div>
         </div>
       </section>
       <section className="why section">
@@ -426,14 +513,16 @@ function Home() {
         </div>
       </section>
       <section className="container education-feature">
-        <div className="education-art" aria-hidden="true">
-          <Files size={100} strokeWidth={0.65} />
-          <span>
-            THE AWARD IS JUST
-            <br />
-            THE BEGINNING.
-          </span>
-        </div>
+        <figure className="education-art">
+          <img
+            src={`${import.meta.env.BASE_URL}images/financial-planning.png`}
+            width="306"
+            height="158"
+            loading="lazy"
+            alt="Financial charts, a notebook, and a pen arranged for a budget review"
+          />
+          <figcaption>The award is just the beginning.</figcaption>
+        </figure>
         <div>
           <p className="eyebrow">KNOWLEDGE THAT BUILDS CONFIDENCE</p>
           <h2>
@@ -461,16 +550,19 @@ function Home() {
 function ResourceCard({ article }: { article: (typeof articles)[number] }) {
   return (
     <Link className="resource-card" to={`/resources/${article.slug}`}>
-      <div className="resource-art" aria-hidden="true">
-        <div className="paper">
-          <span />
-          <span />
-          <span />
-          <span />
-        </div>
-        <span className="resource-symbol">
-          <Sprout size={35} strokeWidth={1} />
-        </span>
+      <div className="resource-art">
+        <img
+          src={`${import.meta.env.BASE_URL}images/${article.category === "Getting started" ? "pennsylvania-capitol" : article.category === "Leadership" || article.category === "Fiscal stewardship" ? "collaboration" : "financial-planning"}.png`}
+          loading="lazy"
+          alt={
+            article.category === "Getting started"
+              ? "Pennsylvania State Capitol exterior"
+              : article.category === "Leadership" ||
+                  article.category === "Fiscal stewardship"
+                ? "Illustrative professionals discussing financial documents"
+                : "Charts and supporting records prepared for financial planning"
+          }
+        />
       </div>
       <p className="eyebrow">{article.category}</p>
       <h3>{article.title}</h3>

@@ -9,8 +9,6 @@ import {
   ShieldCheck,
   Landmark,
   Sprout,
-  Pause,
-  Play,
   X,
 } from "lucide-react";
 import { services } from "./content";
@@ -34,14 +32,7 @@ export function ServicesRail() {
   const [reduced, setReduced] = useState(
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
-  const [paused, setPaused] = useState(false);
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
-  const [visible, setVisible] = useState(false);
   const [bounds, setBounds] = useState({ start: true, end: false });
-  const playing =
-    !reduced && !paused && !hovered && !focused && visible && selected === null;
-
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     const changed = () => setReduced(media.matches);
@@ -52,11 +43,6 @@ export function ServicesRail() {
   useEffect(() => {
     const element = rail.current;
     if (!element) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setVisible(entry.isIntersecting),
-      { threshold: 0.15 },
-    );
-    observer.observe(element);
     const measure = () =>
       setBounds({
         start: element.scrollLeft < 8,
@@ -68,25 +54,10 @@ export function ServicesRail() {
     element.addEventListener("scroll", measure, { passive: true });
     measure();
     return () => {
-      observer.disconnect();
       resize.disconnect();
       element.removeEventListener("scroll", measure);
     };
   }, []);
-
-  useEffect(() => {
-    if (!playing) return;
-    const timer = window.setInterval(() => {
-      const element = rail.current;
-      if (!element || document.hidden) return;
-      const step =
-        (element.firstElementChild?.getBoundingClientRect().width || 350) + 24;
-      if (element.scrollLeft + element.clientWidth >= element.scrollWidth - 8)
-        element.scrollTo({ left: 0, behavior: "smooth" });
-      else element.scrollBy({ left: step, behavior: "smooth" });
-    }, 7000);
-    return () => window.clearInterval(timer);
-  }, [playing]);
 
   useEffect(() => {
     if (selected === null || !rail.current) return;
@@ -102,7 +73,6 @@ export function ServicesRail() {
   }, [selected]);
 
   function move(direction: number) {
-    setPaused(true);
     const element = rail.current;
     if (element)
       element.scrollBy({
@@ -134,21 +104,6 @@ export function ServicesRail() {
           </p>
           <div className="rail-controls">
             <button
-              className="rail-motion"
-              disabled={reduced}
-              aria-label={
-                reduced
-                  ? "Service animation disabled for reduced motion"
-                  : paused
-                    ? "Resume service animation"
-                    : "Pause service animation"
-              }
-              onClick={() => setPaused(!paused)}
-            >
-              {paused || reduced ? <Play size={16} /> : <Pause size={16} />}
-              <span>{reduced ? "Motion off" : paused ? "Play" : "Pause"}</span>
-            </button>
-            <button
               className="rail-arrow"
               aria-label="Previous services"
               disabled={bounds.start}
@@ -174,25 +129,12 @@ export function ServicesRail() {
           aria-label="Browse advisory services"
           aria-describedby="service-rail-hint"
           tabIndex={0}
-          onPointerEnter={(event) => {
-            if (event.pointerType === "mouse") setHovered(true);
-          }}
-          onPointerLeave={() => setHovered(false)}
-          onPointerDown={() => setPaused(true)}
-          onWheel={() => setPaused(true)}
           onKeyDown={(event) => {
             if (event.target !== event.currentTarget) return;
             if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
               event.preventDefault();
               move(event.key === "ArrowRight" ? 1 : -1);
             }
-          }}
-          onFocusCapture={() => setFocused(true)}
-          onBlurCapture={(event) => {
-            if (
-              !event.currentTarget.contains(event.relatedTarget as Node | null)
-            )
-              setFocused(false);
           }}
         >
           {services.map((item, index) => {

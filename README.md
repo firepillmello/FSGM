@@ -13,16 +13,14 @@ npm run build
 npm run preview
 ```
 
-Default local project path: `/FSGM/`. Navigation uses hash routes, so article links and browser refreshes work on GitHub Pages without a server rewrite. No database or credentials are required. Fonts are self-hosted through Fontsource packages under their included open font licenses, with system fallbacks. Architectural and document illustrations are original CSS; favicon is original SVG. No third-party photography is embedded.
+Default local project path: `/FSGM/`. Navigation uses hash routes, so article links and browser refreshes work on GitHub Pages without a server rewrite. No database or credentials are required. Fonts are self-hosted through Fontsource packages under their included open font licenses, with system fallbacks. The visual palette follows the supplied FSGM trifold brochure. The hero is an original generated river-community illustration; supporting imagery is extracted from the user-provided brochure. Images are hosted locally, with lazy loading below the fold. See `ASSETS.md` for provenance.
 
 ## Edit
 
 - `src/content.ts`: verified business information, contact channels, scheduling URL, navigation, services, industries, and articles. Blank contact values remain hidden. Do not invent credentials, biographies, or contact details.
 - `src/main.tsx`: home sections, navigation, inline disclosures, article routes, form behavior, and metadata.
-- `src/ServicesRail.tsx`: horizontal service rail, pause/play and arrow controls, selected service details, and contact handoff.
-- `src/styles.css`: base layout and component styles.
-- `src/premium.css`: glass surfaces, fine texture, refined typography and spacing, responsive refinements, and reduced-transparency support.
-- `src/organization.css`: section navigation, service dropdown, responsive rail, and inline detail layouts.
+- `src/ServicesRail.tsx`: horizontal service rail, manual arrow and swipe controls, selected service details, and contact handoff.
+- `src/site.css`: the single design system, including the brochure palette, imagery, typography, responsive layouts, hover states, and accessibility preferences.
 - `public/brandmark.svg`: original FSGM letter-art mark.
 - `public/favicon.svg`: matching high-contrast favicon.
 
@@ -58,7 +56,7 @@ npm test
 CHROMIUM_PATH=/usr/bin/chromium npm test
 ```
 
-Browser tests cover same-page navigation, dropdown selection, inline service details, horizontal scrolling and automatic animation, article deep links, expanded resource filters, legacy redirects, contact validation, preserved form entries, mobile navigation, keyboard access, and reduced-motion support. Responsive checks cover 14 widths from 320px to 1920px. Offscreen service cards are intentionally clipped within their own horizontal rail; the document must not overflow. Tests start a Vite server automatically. No private data is used.
+Browser tests cover same-page navigation, service and audience dropdown selection, inline service details, manual horizontal scrolling, article deep links, expanded resource filters, legacy redirects, contact validation, preserved form entries, mobile navigation, keyboard access, and reduced-motion support. Responsive checks cover 14 widths from 320px to 1920px. Offscreen service cards are intentionally clipped within their own horizontal rail; the document must not overflow. Tests start a Vite server automatically. No private data is used.
 
 ## Navigation and content organization
 
@@ -66,7 +64,7 @@ The primary navigation scrolls to `#top`, `#about`, `#services`, `#who-we-serve`
 
 The opening buttons are **Explore Our Services** and **About Us**. Service summaries open one inline detail panel. About and industry details use native expandable disclosures. Resources initially show three articles; **Explore more resources** reveals the full library and filters. Only full articles have separate reading routes because their content is unique. Inquiry links consistently say **Discuss your needs**, and a selected service is carried into the contact form.
 
-The service rail advances every seven seconds only while visible, with no selected detail and no hover or keyboard focus inside it. Pause/play, previous/next arrows, native horizontal scrolling, keyboard arrows, and touch swiping are available. Manual interaction pauses automatic movement. Reduced-motion preferences disable automatic movement and smooth rail scrolling.
+The service rail is entirely manual: previous/next arrows, native horizontal scrolling, keyboard arrows, and touch swiping are available. No play button, playback state, timer, or automatic movement remains. Reduced-motion preferences disable smooth rail scrolling. The Who We Serve dropdown scrolls to and expands the chosen audience; it does not open another page.
 
 
 ## Search indexing
@@ -74,3 +72,9 @@ The service rail advances every seven seconds only while visible, with no select
 Each route updates its browser title, description, and Open Graph fields. `scripts/seo.mjs` generates Organization schema, canonical metadata, robots.txt, and a sitemap containing the root HTTP document. Hash routes are reliable on Pages but are not separately indexable documents, and social crawlers typically see the root metadata. For full article-level SEO and social previews, a future prerendered or multi-page implementation is recommended. GitHub project `robots.txt` is provided as an artifact; only a host-root robots file controls all crawling.
 
 No analytics, fake testimonials, fabricated qualifications, or claims of government affiliation are included.
+
+## Brochure visual direction and story
+
+Colors are taken from the supplied trifold: navy `#082C45`, teal `#176276`, deep teal `#0B3E52`, gold `#D6B76D`, and warm white `#FCFBF7`. Gold is used decoratively on light backgrounds and for high-contrast accents on navy.
+
+About Us focuses on community purpose and the Fiscal Director perspective behind the service. Audience categories belong only in Who We Serve. No founder identity, credentials, or biography are invented.

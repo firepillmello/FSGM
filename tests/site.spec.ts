@@ -20,9 +20,10 @@ test("home navigation scrolls in place and opening CTAs stay simple", async ({
   await expect(page).toHaveURL(/#\/#about$/);
   await expect(page.locator("#about")).toBeInViewport();
   await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+  await page.locator(".audiences-dropdown > summary").click();
   await page
-    .getByRole("navigation")
-    .getByRole("link", { name: "Who We Serve", exact: true })
+    .locator(".audiences-dropdown")
+    .getByRole("link", { name: "Explore who we serve" })
     .click();
   await expect(page.locator("#who-we-serve")).toBeInViewport();
   await expect(hero).toBeAttached();
@@ -83,9 +84,7 @@ test("service rail moves horizontally and closes expanded details", async ({
   await expect
     .poll(() => rail.evaluate((element) => element.scrollLeft))
     .toBeGreaterThan(100);
-  await expect(
-    page.getByRole("button", { name: "Resume service animation" }),
-  ).toBeVisible();
+  await expect(page.locator(".rail-motion")).toHaveCount(0);
   const card = rail.locator(".service-card").nth(3);
   await card.click();
   await expect(page.locator(".inline-service-detail")).toBeInViewport();
@@ -223,16 +222,15 @@ test("inline about and industry details keep information in one place", async ({
   await expect(page).toHaveURL(/#\/#about$/);
 });
 
-test("reduced motion disables automatic scrolling and manual controls still work", async ({
+test("manual service navigation respects reduced motion without playback controls", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("./#/#services");
+  await expect(page.locator(".rail-motion")).toHaveCount(0);
   await expect(
-    page.getByRole("button", {
-      name: "Service animation disabled for reduced motion",
-    }),
-  ).toBeDisabled();
+    page.getByRole("button", { name: /play|pause|resume/i }),
+  ).toHaveCount(0);
   await page.getByRole("button", { name: "Next services" }).click();
   await expect
     .poll(() =>
@@ -291,19 +289,77 @@ test("keyboard skip link moves focus into main content", async ({ page }) => {
   await expect(page.locator("main")).toBeFocused();
 });
 
-test("visible services animate horizontally and can be paused", async ({
+test("Who We Serve dropdown reveals the chosen audience and closes other menus", async ({
   page,
 }) => {
-  await page.goto("./#/#services");
-  const rail = page.locator("#service-rail");
-  await expect(rail).toBeInViewport();
+  await page.goto("./");
+  await page.locator(".services-dropdown > summary").click();
+  await page.locator(".audiences-dropdown > summary").click();
+  await expect(page.locator(".services-dropdown")).not.toHaveAttribute(
+    "open",
+    "",
+  );
+  await page
+    .locator(".audiences-dropdown")
+    .getByRole("link", { name: /Housing & Community Development/ })
+    .click();
+  await expect(page).toHaveURL(/#\/#industry-2$/);
+  await expect(page.locator("#industry-2 details")).toHaveAttribute("open", "");
+  await expect(page.locator("#industry-2")).toBeInViewport();
+  await expect(page.locator(".audiences-dropdown")).not.toHaveAttribute(
+    "open",
+    "",
+  );
+  await page.locator(".audiences-dropdown > summary").click();
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".audiences-dropdown > summary")).toBeFocused();
+  await expect(page.locator(".audiences-dropdown")).not.toHaveAttribute(
+    "open",
+    "",
+  );
+});
+
+test("About Us tells the community story through a Fiscal Director perspective", async ({
+  page,
+}) => {
+  await page.goto("./#/#about");
+  const about = page.locator("#about");
+  await expect(about).toContainText("Public funding begins with a promise");
+  await expect(about).toContainText(
+    "expertise and perspective of a Fiscal Director",
+  );
+  await expect(about.locator(".industry-card")).toHaveCount(0);
+  for (const audience of [
+    "Aging Services Organizations",
+    "Human Services Providers",
+    "Housing & Community Development",
+    "Nonprofits & Community Organizations",
+  ])
+    await expect(about).not.toContainText(audience);
+  await expect(page.locator(".community-visual img")).toBeVisible();
   await expect
-    .poll(() => rail.evaluate((element) => element.scrollLeft), {
-      timeout: 11000,
-    })
-    .toBeGreaterThan(100);
-  await page.getByRole("button", { name: "Pause service animation" }).click();
+    .poll(() =>
+      page
+        .locator(".community-visual img")
+        .evaluate((image) => (image as HTMLImageElement).naturalWidth),
+    )
+    .toBeGreaterThan(1000);
+});
+
+test("mobile Who We Serve dropdown selects without opening a new page", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("./");
+  await page.getByRole("button", { name: "Open navigation" }).click();
+  await page.locator(".audiences-dropdown > summary").click();
+  await page
+    .locator(".audiences-dropdown")
+    .getByRole("link", { name: /Aging Services Organizations/ })
+    .click();
+  await expect(page).toHaveURL(/#\/#industry-0$/);
+  await expect(page.locator("#industry-0 details")).toHaveAttribute("open", "");
   await expect(
-    page.getByRole("button", { name: "Resume service animation" }),
-  ).toBeVisible();
+    page.getByRole("button", { name: "Open navigation" }),
+  ).toHaveAttribute("aria-expanded", "false");
 });
