@@ -8,12 +8,12 @@ export const site = {
   schedulingUrl: "",
   formEndpoint: "",
   navigation: [
-    ["Home", "/"],
-    ["About Us", "/about"],
-    ["Services", "/services"],
-    ["Who We Serve", "/who-we-serve"],
-    ["Resources", "/resources"],
-    ["Contact", "/contact"],
+    ["Home", "/#top"],
+    ["About Us", "/#about"],
+    ["Services", "/#services"],
+    ["Who We Serve", "/#who-we-serve"],
+    ["Resources", "/#resources"],
+    ["Contact", "/#contact"],
   ],
 };
 export const services = [

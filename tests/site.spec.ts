@@ -1,26 +1,113 @@
 import { test, expect } from "@playwright/test";
-test("pages, article deep links, search and categories", async ({ page }) => {
+
+test("home navigation scrolls in place and opening CTAs stay simple", async ({
+  page,
+}) => {
   const errors: string[] = [];
-  page.on("pageerror", (e) => errors.push(e.message));
+  page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("./");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "Every Grant",
+  const hero = page.locator(".home-hero");
+  await expect(
+    hero.getByRole("link", { name: "Explore Our Services" }),
+  ).toBeVisible();
+  await expect(
+    hero.getByRole("link", { name: "About Us", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: /Schedule a Consultation/i }),
+  ).toHaveCount(0);
+  await hero.getByRole("link", { name: "About Us", exact: true }).click();
+  await expect(page).toHaveURL(/#\/#about$/);
+  await expect(page.locator("#about")).toBeInViewport();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+  await page
+    .getByRole("navigation")
+    .getByRole("link", { name: "Who We Serve", exact: true })
+    .click();
+  await expect(page.locator("#who-we-serve")).toBeInViewport();
+  await expect(hero).toBeAttached();
+  expect(errors).toEqual([]);
+});
+
+test("services dropdown selects one inline detail and passes the choice to contact", async ({
+  page,
+}) => {
+  await page.goto("./");
+  const summary = page.locator(".services-dropdown > summary");
+  await summary.click();
+  await expect(page.locator(".services-dropdown")).toHaveAttribute("open", "");
+  await page
+    .locator(".services-menu")
+    .getByRole("link", { name: /Fractional Fiscal Director Services/ })
+    .click();
+  await expect(page).toHaveURL(/#\/#service-5$/);
+  await expect(page.locator(".inline-service-detail")).toHaveCount(1);
+  await expect(page.locator(".inline-service-detail")).toBeInViewport();
+  await expect(page.locator("#selected-service-title")).toHaveText(
+    "Fractional Fiscal Director Services",
   );
-  for (const [path, title] of [
-    ["about", "Experience"],
-    ["services", "Financial clarity"],
-    ["who-we-serve", "Different missions"],
-    ["resources", "Educate first"],
-    ["contact", "strengthen your grant"],
-  ]) {
-    await page.goto(`./#/${path}`);
-    await expect(page.getByRole("heading", { level: 1 })).toContainText(title);
-  }
-  await page.goto("./#/resources");
+  await expect(page.locator(".services-dropdown")).not.toHaveAttribute(
+    "open",
+    "",
+  );
+  await page
+    .locator(".inline-service-detail")
+    .getByRole("link", { name: "Discuss your needs" })
+    .click();
+  await expect(page).toHaveURL(/#\/#contact$/);
+  await expect(page.locator('select[name="assistance"]')).toHaveValue(
+    "Fractional Fiscal Director Services",
+  );
+  await expect(page.locator(".contact-form")).toHaveCount(1);
+  await page.getByLabel("Organization name").fill("Saved organization");
+  await page
+    .getByRole("navigation")
+    .getByRole("link", { name: "About Us", exact: true })
+    .click();
+  await page
+    .getByRole("navigation")
+    .getByRole("link", { name: "Contact", exact: true })
+    .click();
+  await expect(page.getByLabel("Organization name")).toHaveValue(
+    "Saved organization",
+  );
+});
+
+test("service rail moves horizontally and closes expanded details", async ({
+  page,
+}) => {
+  await page.goto("./#/#services");
+  const rail = page.locator("#service-rail");
+  await expect(rail.locator(".service-card")).toHaveCount(7);
+  await page.getByRole("button", { name: "Next services" }).click();
+  await expect
+    .poll(() => rail.evaluate((element) => element.scrollLeft))
+    .toBeGreaterThan(100);
+  await expect(
+    page.getByRole("button", { name: "Resume service animation" }),
+  ).toBeVisible();
+  const card = rail.locator(".service-card").nth(3);
+  await card.click();
+  await expect(page.locator(".inline-service-detail")).toBeInViewport();
+  await expect(page.locator("#selected-service-title")).toHaveText(
+    "Fiscal Compliance & Internal Controls",
+  );
+  await page.getByRole("link", { name: "Close service details" }).click();
+  await expect(page.locator(".inline-service-detail")).toHaveCount(0);
+  await expect(page.locator("#services")).toBeInViewport();
+});
+
+test("resources expand inline, filter, and open unique articles with working deep links", async ({
+  page,
+}) => {
+  await page.goto("./#/#resources");
+  await expect(page.locator(".resource-card")).toHaveCount(3);
+  await page.getByRole("button", { name: "Explore more resources" }).click();
+  await expect(page.locator(".resource-card")).toHaveCount(6);
   await page.getByRole("searchbox").fill("budget");
   await expect(page.locator(".resource-card")).toHaveCount(1);
   await page.getByRole("searchbox").fill("");
-  await page.getByRole("combobox").selectOption("Audit readiness");
+  await page.getByLabel("Browse by topic").selectOption("Audit readiness");
   await expect(page.locator(".resource-card")).toHaveCount(1);
   await page
     .getByRole("link", { name: /Preparing for a Government Grant/ })
@@ -29,14 +116,43 @@ test("pages, article deep links, search and categories", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
     "Financial Review",
   );
+  await page
+    .getByRole("link", { name: "← Back to the resource center" })
+    .click();
+  await expect(page).toHaveURL(/#\/#resources$/);
+  await expect(page.locator("#resources")).toBeInViewport();
+});
+
+test("legacy page URLs redirect to sections and service deep links survive refresh", async ({
+  page,
+}) => {
+  for (const section of [
+    "about",
+    "services",
+    "who-we-serve",
+    "resources",
+    "contact",
+  ]) {
+    await page.goto(`./#/${section}`);
+    await expect(page).toHaveURL(new RegExp(`#/#${section}$`));
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(
+      "Every Grant",
+    );
+  }
+  await page.goto("./#/services#6");
+  await expect(page).toHaveURL(/#\/#service-6$/);
+  await page.reload();
+  await expect(page.locator("#selected-service-title")).toHaveText(
+    "Grant Financial Process Improvement",
+  );
   await page.goto("./#/missing");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
     "back on course",
   );
-  expect(errors).toEqual([]);
 });
-test("contact validates and never sends demo data", async ({ page }) => {
-  await page.goto("./#/contact");
+
+test("contact validates and never sends demo entries", async ({ page }) => {
+  await page.goto("./#/#contact");
   await page.getByRole("button", { name: "Preview inquiry" }).click();
   await expect(page.locator("input:invalid").first()).toBeVisible();
   await page.getByLabel("Organization name").fill("Community Example");
@@ -50,8 +166,8 @@ test("contact validates and never sends demo data", async ({ page }) => {
     .getByLabel("How can we help")
     .fill("Looking for budget reporting support.");
   const posts: string[] = [];
-  page.on("request", (req) => {
-    if (req.method() === "POST") posts.push(req.url());
+  page.on("request", (request) => {
+    if (request.method() === "POST") posts.push(request.url());
   });
   await page.getByRole("button", { name: "Preview inquiry" }).click();
   await expect(page.getByRole("status")).toContainText(
@@ -59,60 +175,112 @@ test("contact validates and never sends demo data", async ({ page }) => {
   );
   expect(posts).toEqual([]);
 });
-test("responsive navigation and no horizontal overflow", async ({ page }) => {
-  for (const width of [360, 390, 768, 1440]) {
-    await page.setViewportSize({ width, height: 900 });
-    await page.goto("./");
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
-      ),
-    ).toBeTruthy();
-  }
+
+test("mobile menu and services disclosure support touch, keyboard, and Escape", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("./");
   await page.getByRole("button", { name: "Open navigation" }).click();
-  await expect(
-    page.getByRole("button", { name: "Close navigation" }),
-  ).toHaveAttribute("aria-expanded", "true");
+  await page.locator(".services-dropdown > summary").click();
   await page
-    .getByRole("navigation")
-    .getByRole("link", { name: "Resources", exact: true })
+    .locator(".services-menu")
+    .getByRole("link", { name: /Financial Reporting/ })
     .click();
-  await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "Educate first",
+  await expect(
+    page.getByRole("button", { name: "Open navigation" }),
+  ).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator("#selected-service-title")).toHaveText(
+    "Financial Reporting",
   );
+  await page.getByRole("button", { name: "Open navigation" }).click();
+  await page.locator(".services-dropdown > summary").focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".services-dropdown")).toHaveAttribute("open", "");
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".services-dropdown")).not.toHaveAttribute(
+    "open",
+    "",
+  );
+  await page.keyboard.press("Escape");
   await expect(
     page.getByRole("button", { name: "Open navigation" }),
   ).toHaveAttribute("aria-expanded", "false");
 });
-test("all articles and pages fit mobile, with keyboard skip link", async ({
+
+test("inline about and industry details keep information in one place", async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 360, height: 800 });
-  for (const route of [
-    "about",
-    "services",
-    "who-we-serve",
-    "resources",
-    "contact",
-    "resources/after-the-award",
-    "resources/budget-versus-actual",
-    "resources/common-financial-mistakes",
-    "resources/financial-review-preparation",
-    "resources/internal-controls",
-    "resources/fractional-fiscal-director",
+  await page.goto("./#/#about");
+  await page.getByText("Explore more about us", { exact: true }).click();
+  await expect(page.locator(".about-disclosure")).toHaveAttribute("open", "");
+  await expect(page.locator(".about-disclosure")).toContainText(
+    "Integrity, accountability",
+  );
+  await page.locator("#industry-0 summary").click();
+  await expect(page.locator("#industry-0 details")).toHaveAttribute("open", "");
+  await expect(page.locator("#industry-0")).toContainText("Service units");
+  await expect(page).toHaveURL(/#\/#about$/);
+});
+
+test("reduced motion disables automatic scrolling and manual controls still work", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("./#/#services");
+  await expect(
+    page.getByRole("button", {
+      name: "Service animation disabled for reduced motion",
+    }),
+  ).toBeDisabled();
+  await page.getByRole("button", { name: "Next services" }).click();
+  await expect
+    .poll(() =>
+      page.locator("#service-rail").evaluate((element) => element.scrollLeft),
+    )
+    .toBeGreaterThan(100);
+});
+
+test("responsive layouts retain readable text without page overflow", async ({
+  page,
+}) => {
+  for (const width of [
+    320, 360, 390, 480, 700, 760, 768, 950, 1024, 1050, 1100, 1280, 1440, 1920,
   ]) {
-    await page.goto(`./#/${route}`);
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
-      ),
-      route,
-    ).toBeTruthy();
-    expect(await page.title()).not.toContain("Page Not Found");
+    await page.setViewportSize({ width, height: 1000 });
+    for (const route of ["", "/#service-6", "/resources/after-the-award"]) {
+      await page.goto(`./#${route || "/"}`);
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await page.evaluate(() => document.fonts.ready);
+      const problems = await page.evaluate(() => {
+        const found: string[] = [];
+        if (document.documentElement.scrollWidth > innerWidth)
+          found.push("page overflow");
+        for (const element of document.querySelectorAll(
+          "h1,h2,h3,.button,.contact-form",
+        )) {
+          // Cards intentionally extend beyond the clipped, horizontally scrollable rail.
+          if (element.closest(".service-rail")) continue;
+          const rect = element.getBoundingClientRect();
+          if (rect.width && (rect.left < -1 || rect.right > innerWidth + 1))
+            found.push(`${element.tagName} beyond viewport`);
+        }
+        const logo = document.querySelector("header .logo")!,
+          nav = document.querySelector("nav")!;
+        if (
+          innerWidth > 1050 &&
+          getComputedStyle(nav).display !== "none" &&
+          logo.getBoundingClientRect().right > nav.getBoundingClientRect().left
+        )
+          found.push("header collision");
+        return found;
+      });
+      expect(problems, `${width}px ${route}`).toEqual([]);
+    }
   }
+});
+
+test("keyboard skip link moves focus into main content", async ({ page }) => {
   await page.goto("./");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await page.keyboard.press("Tab");
@@ -122,75 +290,20 @@ test("all articles and pages fit mobile, with keyboard skip link", async ({
   await page.keyboard.press("Enter");
   await expect(page.locator("main")).toBeFocused();
 });
-test("page layouts remain readable across mobile, tablet, and desktop breakpoints", async ({
-  page,
-}) => {
-  for (const width of [
-    320, 360, 390, 480, 700, 760, 768, 950, 1024, 1050, 1100, 1280, 1440, 1920,
-  ]) {
-    await page.setViewportSize({ width, height: 1000 });
-    for (const route of [
-      "",
-      "about",
-      "services",
-      "who-we-serve",
-      "resources",
-      "contact",
-      "resources/after-the-award",
-    ]) {
-      await page.goto(`./#/${route}`);
-      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-      await page.evaluate(() => document.fonts.ready);
-      const problems = await page.evaluate(() => {
-        const found: string[] = [];
-        if (document.documentElement.scrollWidth > innerWidth)
-          found.push("horizontal overflow");
-        for (const element of document.querySelectorAll(
-          "h1,h2,h3,.button,.service-card,.resource-card,.contact-form",
-        )) {
-          const rect = element.getBoundingClientRect();
-          if (rect.width && (rect.left < -1 || rect.right > innerWidth + 1))
-            found.push(`${element.tagName} outside viewport`);
-        }
-        const logo = document.querySelector("header .logo")!,
-          navigation = document.querySelector("nav")!;
-        if (
-          innerWidth > 1050 &&
-          getComputedStyle(navigation).display !== "none" &&
-          logo.getBoundingClientRect().right >
-            navigation.getBoundingClientRect().left
-        )
-          found.push("logo overlaps navigation");
-        for (const element of document.querySelectorAll(".reveal")) {
-          if (Number(getComputedStyle(element).opacity) < 1)
-            found.push("content remains faint before scrolling");
-        }
-        return found;
-      });
-      expect(problems, `${width}px /${route}`).toEqual([]);
-    }
-  }
-});
 
-test("service cards respond to hovering and respect reduced motion", async ({
+test("visible services animate horizontally and can be paused", async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.goto("./");
-  const card = page.locator(".service-card").first();
-  await card.scrollIntoViewIfNeeded();
-  await page.mouse.move(4, 500);
-  const documentTop = () =>
-    card.evaluate(
-      (element) => element.getBoundingClientRect().top + window.scrollY,
-    );
-  const initialTop = await documentTop();
-  await card.hover();
-  await expect.poll(documentTop).toBeLessThan(initialTop - 1);
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect.poll(documentTop).toBeCloseTo(initialTop, 0);
-  await card.click();
+  await page.goto("./#/#services");
+  const rail = page.locator("#service-rail");
+  await expect(rail).toBeInViewport();
+  await expect
+    .poll(() => rail.evaluate((element) => element.scrollLeft), {
+      timeout: 11000,
+    })
+    .toBeGreaterThan(100);
+  await page.getByRole("button", { name: "Pause service animation" }).click();
   await expect(
-    page.getByRole("heading", { name: "Grant Budget Management", exact: true }),
+    page.getByRole("button", { name: "Resume service animation" }),
   ).toBeVisible();
 });

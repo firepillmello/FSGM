@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   HashRouter,
   Link,
-  NavLink,
+  Navigate,
   Route,
   Routes,
   useLocation,
@@ -15,16 +15,15 @@ import {
   Menu,
   X,
   Landmark,
-  ChartNoAxesCombined,
   Files,
   ShieldCheck,
   Sprout,
   HeartHandshake,
   Building2,
   Users,
-  Check,
   Search,
   MoveUpRight,
+  ChevronDown,
 } from "lucide-react";
 import {
   site,
@@ -35,15 +34,8 @@ import {
 } from "./content";
 import "./styles.css";
 import "./premium.css";
-const icons = [
-  ChartNoAxesCombined,
-  Files,
-  ChartNoAxesCombined,
-  ShieldCheck,
-  Files,
-  Landmark,
-  Sprout,
-];
+import "./organization.css";
+import { ServicesRail } from "./ServicesRail";
 function Logo({ light = false }: { light?: boolean }) {
   return (
     <Link
@@ -80,7 +72,7 @@ function Logo({ light = false }: { light?: boolean }) {
   );
 }
 function Button({
-  to = "/contact",
+  to = "/#contact",
   children,
   secondary = false,
 }: {
@@ -97,8 +89,35 @@ function Button({
 }
 function Header() {
   const [open, setOpen] = useState(false);
-  const { pathname } = useLocation();
-  useEffect(() => setOpen(false), [pathname]);
+  const dropdown = useRef<HTMLDetailsElement>(null);
+  const location = useLocation();
+  useEffect(() => {
+    setOpen(false);
+    if (dropdown.current) dropdown.current.open = false;
+  }, [location]);
+  useEffect(() => {
+    const closeOutside = (event: PointerEvent) => {
+      if (dropdown.current && !dropdown.current.contains(event.target as Node))
+        dropdown.current.open = false;
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      if (dropdown.current?.open) {
+        dropdown.current.open = false;
+        dropdown.current.querySelector("summary")?.focus();
+      } else if (open) {
+        setOpen(false);
+        document.querySelector<HTMLButtonElement>(".menu-button")?.focus();
+      }
+    };
+    document.addEventListener("pointerdown", closeOutside);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOutside);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [open]);
+  const current = location.pathname === "/" ? location.hash || "#top" : "";
   return (
     <header>
       <div className="nav-shell">
@@ -117,12 +136,39 @@ function Header() {
           className={open ? "open" : ""}
           aria-label="Main navigation"
         >
-          {site.navigation.map(([label, path]) => (
-            <NavLink key={path} to={path} end={path === "/"}>
-              {label}
-            </NavLink>
-          ))}
-          <Button>Schedule a Consultation</Button>
+          {site.navigation.map(([label, path]) =>
+            label === "Services" ? (
+              <details className="services-dropdown" ref={dropdown} key={label}>
+                <summary
+                  className={current.startsWith("#service") ? "active" : ""}
+                >
+                  Services <ChevronDown size={15} />
+                </summary>
+                <div className="services-menu">
+                  <Link className="services-menu-overview" to="/#services">
+                    Explore all services <ArrowRight size={16} />
+                  </Link>
+                  {services.map((service, index) => (
+                    <Link key={service.title} to={`/#service-${index}`}>
+                      <span>0{index + 1}</span>
+                      {service.title}
+                      <ArrowUpRight size={15} />
+                    </Link>
+                  ))}
+                </div>
+              </details>
+            ) : (
+              <Link
+                key={path}
+                to={path}
+                aria-current={
+                  current === path.slice(1) ? "location" : undefined
+                }
+              >
+                {label}
+              </Link>
+            ),
+          )}
         </nav>
       </div>
     </header>
@@ -172,79 +218,33 @@ function ArchitecturalVisual() {
     </div>
   );
 }
-function HeroSection({
-  eyebrow,
-  title,
-  text,
-  children,
-}: {
-  eyebrow: string;
-  title: string;
-  text?: string;
-  children?: React.ReactNode;
-}) {
-  return (
-    <section className="page-hero container">
-      <p className="eyebrow">{eyebrow}</p>
-      <h1>{title}</h1>
-      {text && <p className="intro">{text}</p>}
-      {children}
-    </section>
-  );
-}
-function ServiceCard({ index }: { index: number }) {
-  const Icon = icons[index];
-  const service = services[index];
-  return (
-    <Link className="service-card reveal" to={`/services#${index}`}>
-      <div className="card-top">
-        <Icon size={28} strokeWidth={1.3} />
-        <span>0{index + 1}</span>
-      </div>
-      <h3>{service.title}</h3>
-      <p>{service.short}</p>
-      <span className="text-link">
-        Explore service <ArrowUpRight size={16} />
-      </span>
-    </Link>
-  );
-}
 function IndustryCard({ index }: { index: number }) {
   const Icon = [Sprout, HeartHandshake, Building2, Users][index];
+  const industry = industries[index];
   return (
-    <Link to={`/who-we-serve#${index}`} className="industry-card">
+    <article className="industry-card" id={`industry-${index}`}>
       <Icon size={29} strokeWidth={1.2} />
-      <h3>{industries[index].title}</h3>
-      <p>{industries[index].text}</p>
-      <ArrowUpRight size={20} />
-    </Link>
-  );
-}
-function CTASection() {
-  return (
-    <section className="cta">
-      <div className="container cta-inner">
+      <h3>{industry.title}</h3>
+      <p>{industry.text}</p>
+      <details className="inline-disclosure">
+        <summary>
+          Explore more<span className="sr-only"> about {industry.title}</span>
+          <ChevronDown size={16} />
+        </summary>
         <div>
-          <p className="eyebrow">A CONVERSATION IS A GOOD PLACE TO START</p>
-          <h2>
-            Your mission deserves
-            <br />
-            <em>strong financial stewardship.</em>
-          </h2>
-          <p>
-            Discuss your funding responsibilities, the challenges facing your
-            team, and a practical scope of support.
-          </p>
+          <p>{industry.detail}</p>
+          <Link className="text-link" to="/#contact">
+            Discuss your needs <ArrowUpRight size={16} />
+          </Link>
         </div>
-        <Button>Schedule a Consultation</Button>
-      </div>
-    </section>
+      </details>
+    </article>
   );
 }
 function Home() {
   return (
     <>
-      <section className="home-hero container">
+      <section className="home-hero container" id="top" tabIndex={-1}>
         <div className="hero-copy">
           <p className="eyebrow">
             FISCAL STEWARDSHIP <i /> COMPLIANCE <i /> COMMUNITY
@@ -263,9 +263,9 @@ function Home() {
             requirements, and protect the mission behind every grant.
           </p>
           <div className="button-row">
-            <Button to="/services">Explore Our Services</Button>
-            <Link className="quiet-link" to="/contact">
-              Schedule a Consultation <ArrowUpRight size={16} />
+            <Button to="/#services">Explore Our Services</Button>
+            <Link className="quiet-link" to="/#about">
+              About Us <ArrowUpRight size={16} />
             </Link>
           </div>
           <div className="hero-note">
@@ -281,7 +281,11 @@ function Home() {
         <span className="strip-dot">✧</span>
         <span>STRENGTHEN COMMUNITIES.</span>
       </div>
-      <section className="container section split-intro reveal">
+      <section
+        className="container section split-intro reveal"
+        id="about"
+        tabIndex={-1}
+      >
         <p className="eyebrow">THE PURPOSE BEHIND OUR WORK</p>
         <div>
           <h2>
@@ -302,31 +306,31 @@ function Home() {
             is designed around your funding requirements, your team’s capacity,
             and your mission.
           </p>
-          <Link className="text-link" to="/about">
-            Get to know FSGM Advisory <ArrowUpRight size={17} />
-          </Link>
+          <details className="inline-disclosure about-disclosure">
+            <summary>
+              Explore more about us <ChevronDown size={16} />
+            </summary>
+            <div>
+              <h3>Protecting the Purpose Behind Public Funding.</h3>
+              <p>
+                Our vision is a community sector in which sound financial
+                stewardship strengthens, rather than competes with, program
+                delivery. We believe clear information, shared understanding,
+                and proportionate controls help organizations protect the
+                purpose behind public funding.
+              </p>
+              <p>
+                Integrity, accountability, transparency, education, partnership,
+                and community impact guide our work. Our focus is post-award
+                fiscal advisory support; we do not offer grant-writing, CPA, or
+                independent audit services.
+              </p>
+            </div>
+          </details>
         </div>
       </section>
-      <section className="services-section section">
-        <div className="container">
-          <div className="heading-row">
-            <SectionHeading
-              eyebrow="EXPERTISE WITH PURPOSE"
-              title="Specialized expertise. Clear financial direction."
-              text="Coordinated post-award support that connects your approved budget, supporting records, reimbursement requests, and financial reports."
-            />
-            <Link className="text-link" to="/services">
-              View all services <ArrowUpRight size={17} />
-            </Link>
-          </div>
-          <div className="service-grid">
-            {[0, 1, 2, 3, 4, 5].map((i) => (
-              <ServiceCard key={i} index={i} />
-            ))}
-          </div>
-        </div>
-      </section>
-      <section className="container section">
+      <ServicesRail />
+      <section className="container section" id="who-we-serve" tabIndex={-1}>
         <SectionHeading
           eyebrow="WHO WE SERVE"
           title="Supporting the people who support our communities."
@@ -351,7 +355,7 @@ function Home() {
               numbers. It provides a clearer understanding of commitments,
               emerging risks, and the decisions needed to keep programs moving.
             </p>
-            <Button to="/about" secondary>
+            <Button to="/#about" secondary>
               Our philosophy
             </Button>
           </div>
@@ -449,214 +453,8 @@ function Home() {
           </Link>
         </div>
       </section>
-      <section className="container section">
-        <div className="heading-row">
-          <SectionHeading
-            eyebrow="THE GRANT RESOURCE CENTER"
-            title="Knowledge worth sharing."
-          />
-          <Link to="/resources" className="text-link">
-            Visit the resource center <ArrowUpRight size={17} />
-          </Link>
-        </div>
-        <div className="resource-grid">
-          {articles.slice(0, 3).map((article) => (
-            <ResourceCard key={article.slug} article={article} />
-          ))}
-        </div>
-      </section>
-      <CTASection />
-    </>
-  );
-}
-function About() {
-  return (
-    <>
-      <HeroSection
-        eyebrow="ABOUT FSGM ADVISORY"
-        title="Experience that understands the responsibility behind public funding."
-        text="Thoughtful fiscal support for the organizations doing essential work in our communities."
-      />
-      <section className="container section about-grid">
-        <ArchitecturalVisual />
-        <div>
-          <p className="eyebrow">OUR PURPOSE</p>
-          <h2>Protecting the Purpose Behind Public Funding.</h2>
-          <p>
-            FSGM Advisory is a Pennsylvania-based boutique fiscal management and
-            consulting firm focused on the responsibilities that follow a
-            government grant award.
-          </p>
-          <p>
-            We help organizations translate award requirements into workable
-            financial routines: budgets that are monitored, expenditures that
-            are supported, reimbursements that are reconciled, and reports that
-            leadership can understand. Our advisory model makes focused fiscal
-            expertise accessible without requiring a full-time Fiscal Director.
-          </p>
-          <p>
-            Our vision is a community sector in which sound financial
-            stewardship strengthens, rather than competes with, program
-            delivery. We believe clear information, shared understanding, and
-            proportionate controls help organizations protect the purpose behind
-            public funding.
-          </p>
-          <p>
-            Our focus is post-award advisory support. We do not offer
-            grant-writing, CPA, or independent audit services.
-          </p>
-        </div>
-      </section>
-      <section className="section services-section">
-        <div className="container">
-          <SectionHeading
-            eyebrow="WHAT GUIDES US"
-            title="Our values, in practice."
-          />
-          <div className="values-grid">
-            {[
-              [
-                "Integrity",
-                "Give candid guidance and respect the responsibility that comes with public resources.",
-              ],
-              [
-                "Accountability",
-                "Connect decisions, expenditures, and reports to clear supporting records.",
-              ],
-              [
-                "Transparency",
-                "Make financial information understandable and questions welcome.",
-              ],
-              [
-                "Education",
-                "Share the context that helps teams build their own confidence.",
-              ],
-              [
-                "Partnership",
-                "Listen first and work alongside your organization.",
-              ],
-              [
-                "Community Impact",
-                "Remember the people and programs behind every funding decision.",
-              ],
-            ].map(([title, text]) => (
-              <div key={title}>
-                <Sprout size={23} />
-                <h3>{title}</h3>
-                <p>{text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-      <section className="container section split-intro">
-        <p className="eyebrow">A WORKING RELATIONSHIP BUILT ON CLARITY</p>
-        <div>
-          <h2>
-            Start with a conversation.
-            <br />
-            <em>Build an understanding.</em>
-          </h2>
-          <p>
-            A productive advisory relationship starts with a shared
-            understanding of your responsibilities. We discuss your funding
-            structure, current processes, team capacity, and immediate
-            priorities before identifying an appropriate scope of support.
-          </p>
-          <p className="small-note">
-            The initial conversation is a chance to clarify expectations,
-            discuss how we would coordinate with your existing team and
-            advisers, and determine whether the engagement is a good fit.
-          </p>
-          <Button>Discuss an advisory relationship</Button>
-        </div>
-      </section>
-      <CTASection />
-    </>
-  );
-}
-function Services() {
-  return (
-    <>
-      <HeroSection
-        eyebrow="OUR SERVICES"
-        title="Financial clarity. Practical support. Purposeful stewardship."
-        text="Specialized post-award support shaped around your organization’s funding responsibilities and administrative capacity."
-      />
-      <div className="container service-jump">
-        {services.map((s, i) => (
-          <Link key={s.title} to={`/services#${i}`}>
-            {s.title}
-            <ArrowRight size={14} />
-          </Link>
-        ))}
-      </div>
-      <section className="container service-details">
-        {services.map((s, i) => {
-          const Icon = icons[i];
-          return (
-            <article className="service-detail" id={String(i)} key={s.title}>
-              <div className="service-detail-title">
-                <span className="eyebrow">0{i + 1} / ADVISORY SERVICES</span>
-                <Icon size={37} strokeWidth={1} />
-                <h2>{s.title}</h2>
-                <p>{s.description}</p>
-                <Link className="text-link" to="/contact">
-                  Discuss your needs <ArrowUpRight size={17} />
-                </Link>
-              </div>
-              <div className="service-detail-copy">
-                <h3>The challenge</h3>
-                <p>{s.challenge}</p>
-                <h3>How we help</h3>
-                <p>{s.help}</p>
-                <h3>What it means for your team</h3>
-                <p>{s.benefit}</p>
-              </div>
-            </article>
-          );
-        })}
-      </section>
-      <CTASection />
-    </>
-  );
-}
-function WhoWeServe() {
-  return (
-    <>
-      <HeroSection
-        eyebrow="WHO WE SERVE"
-        title="Different missions. A shared responsibility."
-        text="Your programs may serve different needs, but every public award brings a financial responsibility. We help connect that responsibility to the realities of your organization’s work."
-      />
-      <section className="container industry-details">
-        {industries.map((industry, i) => (
-          <article id={String(i)} key={industry.title}>
-            <span className="step-number">0{i + 1}</span>
-            <div>
-              <h2>{industry.title}</h2>
-              <p className="intro">{industry.text}</p>
-              <p>{industry.detail}</p>
-              <Link className="text-link" to="/contact">
-                Let’s talk about your organization <ArrowUpRight size={17} />
-              </Link>
-            </div>
-          </article>
-        ))}
-      </section>
-      <section className="container capacity-note">
-        <Sprout size={35} />
-        <div>
-          <h2>A small team shouldn’t mean going it alone.</h2>
-          <p>
-            You do not need a large finance department to build a more reliable
-            process. We begin with your team’s actual capacity, identify the
-            most pressing gaps, and help establish manageable routines with
-            clear ownership and follow-through.
-          </p>
-        </div>
-      </section>
-      <CTASection />
+      <ResourcesSection />
+      <ContactSection />
     </>
   );
 }
@@ -683,59 +481,72 @@ function ResourceCard({ article }: { article: (typeof articles)[number] }) {
     </Link>
   );
 }
-function Resources() {
+function ResourcesSection() {
+  const [expanded, setExpanded] = useState(false);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All resources");
   const filtered = articles.filter(
-    (a) =>
-      (category === "All resources" || a.category === category) &&
-      `${a.title} ${a.intro}`.toLowerCase().includes(search.toLowerCase()),
+    (article) =>
+      (category === "All resources" || article.category === category) &&
+      `${article.title} ${article.intro}`
+        .toLowerCase()
+        .includes(search.toLowerCase()),
   );
+  const shown = expanded ? filtered : articles.slice(0, 3);
   return (
-    <>
-      <HeroSection
+    <section
+      className="container section resource-section"
+      id="resources"
+      tabIndex={-1}
+    >
+      <SectionHeading
         eyebrow="THE GRANT RESOURCE CENTER"
-        title="Educate first. Build trust. Strengthen communities."
-        text="Thoughtful explanations of the budgets, records, controls, and reporting routines behind responsible grant management. Start with a question, explore a topic, and bring a clearer perspective to your next financial decision."
+        title="Knowledge worth sharing."
+        text="Clear, practical guidance to help you navigate the financial responsibilities behind public funding."
       />
-      <section className="container section resource-section">
-        <div className="resource-tools">
-          <label className="search">
-            <Search size={19} />
-            <span className="sr-only">Search resources</span>
-            <input
-              type="search"
-              placeholder="Search the resource center"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </label>
-          <label className="category-label">
-            Browse by topic
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              {[
-                "All resources",
-                ...new Set(articles.map((a) => a.category)),
-              ].map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-            </select>
-          </label>
-        </div>
-        <p className="result-count" aria-live="polite">
-          {filtered.length} {filtered.length === 1 ? "resource" : "resources"}
-        </p>
+      <div id="resource-library">
+        {expanded && (
+          <>
+            <div className="resource-tools">
+              <label className="search">
+                <Search size={19} />
+                <span className="sr-only">Search resources</span>
+                <input
+                  type="search"
+                  placeholder="Search the resource center"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                />
+              </label>
+              <label className="category-label">
+                Browse by topic
+                <select
+                  value={category}
+                  onChange={(event) => setCategory(event.target.value)}
+                >
+                  {[
+                    "All resources",
+                    ...new Set(articles.map((article) => article.category)),
+                  ].map((topic) => (
+                    <option key={topic}>{topic}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <p className="result-count" aria-live="polite">
+              {filtered.length}{" "}
+              {filtered.length === 1 ? "resource" : "resources"}
+            </p>
+          </>
+        )}
         <div className="resource-grid">
-          {filtered.map((a) => (
-            <ResourceCard key={a.slug} article={a} />
+          {shown.map((article) => (
+            <ResourceCard key={article.slug} article={article} />
           ))}
         </div>
-        {!filtered.length && (
+        {!shown.length && (
           <div className="empty-state">
-            <h2>No resources found.</h2>
+            <h3>No resources found.</h3>
             <p>Try a different search or topic.</p>
             <button
               className="button"
@@ -748,10 +559,22 @@ function Resources() {
             </button>
           </div>
         )}
-        <aside className="education-notice">{guidanceNotice}</aside>
-      </section>
-      <CTASection />
-    </>
+      </div>
+      <button
+        className="button secondary resource-expand"
+        aria-expanded={expanded}
+        aria-controls="resource-library"
+        onClick={() => {
+          setExpanded(!expanded);
+          setSearch("");
+          setCategory("All resources");
+        }}
+      >
+        {expanded ? "Show fewer resources" : "Explore more resources"}
+        <ChevronDown size={17} />
+      </button>
+      {expanded && <aside className="education-notice">{guidanceNotice}</aside>}
+    </section>
   );
 }
 function Article() {
@@ -761,7 +584,7 @@ function Article() {
   return (
     <>
       <article className="article-page container">
-        <Link className="text-link" to="/resources">
+        <Link className="text-link" to="/#resources">
           ← Back to the resource center
         </Link>
         <p className="eyebrow">{article.category} / FSGM FIELD NOTES</p>
@@ -781,7 +604,7 @@ function Article() {
             <p>
               Have a question about your organization’s financial processes?
             </p>
-            <Button>Start a conversation</Button>
+            <Button>Discuss your needs</Button>
           </div>
         </div>
       </article>
@@ -803,6 +626,15 @@ function Article() {
   );
 }
 function ContactForm() {
+  const { state } = useLocation();
+  const [assistance, setAssistance] = useState("");
+  useEffect(() => {
+    if (
+      typeof state?.service === "string" &&
+      services.some((service) => service.title === state.service)
+    )
+      setAssistance(state.service);
+  }, [state]);
   const [status, setStatus] = useState("");
   const [sending, setSending] = useState(false);
   async function submit(e: React.FormEvent<HTMLFormElement>) {
@@ -890,7 +722,12 @@ function ContactForm() {
         </label>
         <label>
           General assistance needed
-          <select name="assistance" required defaultValue="">
+          <select
+            name="assistance"
+            required
+            value={assistance}
+            onChange={(event) => setAssistance(event.target.value)}
+          >
             <option value="" disabled>
               Select a service
             </option>
@@ -935,22 +772,23 @@ function ContactForm() {
     </form>
   );
 }
-function Contact() {
+function ContactSection() {
   return (
-    <>
-      <HeroSection
-        eyebrow="LET’S START A CONVERSATION"
-        title="Let’s strengthen your grant financial management."
-        text="Tell us about your organization, the funding you manage, and the financial responsibilities you would like to strengthen. We can begin by understanding your priorities and discussing an appropriate next step."
-      />
-      <section className="container contact-layout">
+    <section className="contact-section" id="contact" tabIndex={-1}>
+      <div className="container contact-section-heading">
+        <SectionHeading
+          eyebrow="LET’S START A CONVERSATION"
+          title="Discuss your needs."
+          text="Tell us about your organization, the funding you manage, and the financial responsibilities you would like to strengthen. We can begin by understanding your priorities and discussing an appropriate next step."
+        />
+      </div>
+      <div className="container contact-layout">
         <aside>
-          <p className="eyebrow">HERE TO LISTEN</p>
-          <h2>
-            Clarity begins
+          <h3>
+            Practical guidance.
             <br />
-            <em>with a conversation.</em>
-          </h2>
+            Support at your scale.
+          </h3>
           <p>
             Whether you are navigating a reporting deadline, reviewing your
             financial processes, or considering ongoing fiscal oversight, the
@@ -971,25 +809,14 @@ function Contact() {
             </p>
           )}
           {site.schedulingUrl && (
-            <a className="button" href={site.schedulingUrl}>
-              Schedule a Consultation
-              <ArrowUpRight size={16} />
+            <a className="text-link" href={site.schedulingUrl}>
+              Discuss your needs <ArrowUpRight size={16} />
             </a>
           )}
-          <div className="contact-promise">
-            <Check size={18} />
-            <p>
-              Practical guidance.
-              <br />
-              Respect for your mission.
-              <br />
-              Support at your scale.
-            </p>
-          </div>
         </aside>
         <ContactForm />
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
 function NotFound() {
@@ -1039,8 +866,8 @@ function Footer() {
             <br />
             Strengthen Communities.
           </h3>
-          <Link className="text-link" to="/contact">
-            Start a conversation <MoveUpRight size={17} />
+          <Link className="text-link" to="/#contact">
+            Discuss your needs <MoveUpRight size={17} />
           </Link>
         </div>
       </div>
@@ -1066,49 +893,35 @@ function Footer() {
     </footer>
   );
 }
-const pageInfo: Record<string, [string, string]> = {
-  "/": [
-    "Government Grant Fiscal Management",
-    "Pennsylvania-based post-award grant fiscal management for nonprofits and community organizations.",
-  ],
-  "/about": [
-    "About Us",
-    "Our mission, values, and approach to responsible public funding stewardship.",
-  ],
-  "/services": [
-    "Advisory Services",
-    "Grant budgets, reimbursement, financial reporting, fiscal controls, audit readiness, and fractional fiscal leadership.",
-  ],
-  "/who-we-serve": [
-    "Who We Serve",
-    "Fiscal support for aging services, human services, housing agencies, and community nonprofits.",
-  ],
-  "/resources": [
-    "Grant Resource Center",
-    "Practical educational resources for government grant financial management.",
-  ],
-  "/contact": [
-    "Contact",
-    "Start a conversation about your organization’s grant fiscal management needs.",
-  ],
-};
 function ScrollToTop() {
   const location = useLocation();
   useEffect(() => {
     const fragment = location.hash.slice(1);
     const timer = window.setTimeout(() => {
-      if (fragment) document.getElementById(fragment)?.scrollIntoView();
-      else window.scrollTo(0, 0);
+      if (fragment) {
+        const target = document.getElementById(fragment);
+        target?.scrollIntoView({
+          block: "start",
+          behavior:
+            location.key === "default" ||
+            window.matchMedia("(prefers-reduced-motion: reduce)").matches
+              ? "instant"
+              : "smooth",
+        });
+        target?.focus({ preventScroll: true });
+      } else window.scrollTo(0, 0);
     }, 30);
     const article = articles.find(
       (a) => location.pathname === `/resources/${a.slug}`,
     );
     const [title, description] = article
       ? [article.title, article.intro]
-      : pageInfo[location.pathname] || [
-          "Page Not Found",
-          "Find your way back to FSGM Advisory.",
-        ];
+      : location.pathname === "/"
+        ? [
+            "Government Grant Fiscal Management",
+            "Pennsylvania-based post-award grant fiscal management for nonprofits and community organizations.",
+          ]
+        : ["Page Not Found", "Find your way back to FSGM Advisory."];
     document.title = `${title} | FSGM Advisory`;
     document
       .querySelector('meta[name="description"]')
@@ -1122,6 +935,17 @@ function ScrollToTop() {
     return () => clearTimeout(timer);
   }, [location]);
   return null;
+}
+function LegacySection({ section }: { section: string }) {
+  const { hash } = useLocation();
+  const index = /^#([0-6])$/.exec(hash)?.[1];
+  const target =
+    section === "services" && index
+      ? `service-${index}`
+      : section === "who-we-serve" && index && Number(index) < industries.length
+        ? `industry-${index}`
+        : section;
+  return <Navigate replace to={`/#${target}`} />;
 }
 function App() {
   return (
@@ -1141,12 +965,24 @@ function App() {
       <main id="main" tabIndex={-1}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/who-we-serve" element={<WhoWeServe />} />
-          <Route path="/resources" element={<Resources />} />
+          <Route path="/about" element={<LegacySection section="about" />} />
+          <Route
+            path="/services"
+            element={<LegacySection section="services" />}
+          />
+          <Route
+            path="/who-we-serve"
+            element={<LegacySection section="who-we-serve" />}
+          />
+          <Route
+            path="/resources"
+            element={<LegacySection section="resources" />}
+          />
           <Route path="/resources/:slug" element={<Article />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route
+            path="/contact"
+            element={<LegacySection section="contact" />}
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
