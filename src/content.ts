@@ -20,24 +20,24 @@ export const services = [
   {
     title: "Grant Budget Management",
     short:
-      "Monitor spending, understand variances, and plan with a clearer view of your award.",
+      "See what you planned, what you have spent, and what is still available.",
     description:
       "A clear, current view of your grant budget helps you make thoughtful decisions throughout the award period.",
     challenge:
       "Multiple awards, changing program needs, and spending deadlines can make it difficult to see where you stand.",
-    help: "We support budget monitoring, expense tracking, budget-to-actual comparisons, and fiscal planning.",
+    help: "We track expenses and compare planned spending with actual costs, so your team can see where the budget needs attention.",
     benefit:
-      "Understand available balances, spot variances early, and plan program spending with greater confidence.",
+      "Know what is available, catch spending differences early, and plan the next steps with confidence.",
   },
   {
     title: "Grant Reimbursement Management",
     short:
-      "Connect expenditure records, reconciliations, and reimbursement requests.",
+      "Organize your records and prepare clear requests to get eligible costs paid back.",
     description:
-      "Organized reimbursement processes connect eligible program costs to the documentation your funder needs.",
+      "Reimbursement means asking your funder to pay back eligible costs. We help connect each request to the records that support it.",
     challenge:
-      "Missing support, inconsistent coding, and unreconciled expenses can delay reimbursement requests.",
-    help: "We organize documentation, prepare reimbursement schedules, reconcile expenditures, and support submissions.",
+      "Missing records or expenses that do not match your accounts can delay payment requests.",
+    help: "We organize supporting records, check costs against your accounts, prepare reimbursement schedules, and help with submissions.",
     benefit:
       "Create a more consistent submission process and a clearer record of what has been requested and received.",
   },
@@ -46,7 +46,7 @@ export const services = [
     short:
       "Translate grant financial activity into reports your leadership can use.",
     description:
-      "Grant reporting should help both your funder and your leadership understand how resources support the work.",
+      "Your reports should help your funder and your leaders understand where the money went and how it supported the work.",
     challenge:
       "Different reporting formats and competing deadlines can overwhelm a small administrative team.",
     help: "We prepare grant-specific financial statements, expenditure reports, funding summaries, and management reports.",
@@ -56,12 +56,12 @@ export const services = [
   {
     title: "Fiscal Compliance & Internal Controls",
     short:
-      "Strengthen approval routines, documentation, and financial oversight.",
+      "Make spending approvals, recordkeeping, and financial checks easier to follow.",
     description:
       "Practical procedures help your team document decisions and handle public funds consistently.",
     challenge:
-      "Unclear responsibilities and informal approvals can leave gaps in expenditure documentation.",
-    help: "We review financial procedures, documentation practices, and internal controls in light of applicable award requirements.",
+      "Unclear responsibilities and informal approvals can leave important spending records incomplete.",
+    help: "We review your financial procedures and internal controls—the checks and approvals that protect funds—against the requirements of your award.",
     benefit:
       "Strengthen oversight, clarify roles, and reduce avoidable process gaps without unnecessary complexity.",
   },
@@ -73,16 +73,16 @@ export const services = [
       "An orderly financial record makes a review easier to navigate for your team and your reviewers.",
     challenge:
       "Scattered records and unresolved balances can turn a financial review into a disruptive search for information.",
-    help: "We organize documents, prepare expenditure support schedules, review reconciliations, and coordinate fiscal audit requests.",
+    help: "We organize documents, prepare records that explain reported costs, check that account balances match, and help coordinate audit requests.",
     benefit:
       "Improve access to supporting records and identify questions to resolve before a review. We do not provide audit opinions or guarantee outcomes.",
   },
   {
     title: "Fractional Fiscal Director Services",
     short:
-      "Bring recurring financial oversight and strategic guidance to your team.",
+      "Get ongoing financial leadership without adding a full-time director.",
     description:
-      "Access financial oversight and strategic fiscal guidance without maintaining a full-time fiscal executive.",
+      "A Fractional Fiscal Director provides financial leadership on a part-time or agreed scope, helping your team plan, review reports, and make informed decisions.",
     challenge:
       "Your organization needs a stronger financial perspective but may not have the capacity for a full-time leadership role.",
     help: "We help leadership review budgets, prioritize financial processes, interpret reports, and plan for funding responsibilities.",
@@ -99,7 +99,7 @@ export const services = [
       "Duplicate spreadsheets, manual handoffs, and unclear filing systems consume valuable program time.",
     help: "We evaluate workflows, improve reporting routines, organize documentation systems, and recommend practical changes.",
     benefit:
-      "Reduce repeated work, make responsibilities clearer, and preserve institutional knowledge.",
+      "Reduce repeated work, clarify responsibilities, and keep important know-how within your team.",
   },
 ];
 export const industries = [
@@ -111,13 +111,13 @@ export const industries = [
   },
   {
     title: "Human Services Providers",
-    text: "Fiscal clarity for organizations meeting essential community needs.",
+    text: "Clear financial guidance for organizations meeting essential community needs.",
     detail:
       "Publicly funded human-service programs often combine several contracts, reporting schedules, and cost allocation needs. We help organize financial information by program and establish a workable rhythm for reimbursement and oversight.",
   },
   {
     title: "Housing & Community Development",
-    text: "Accountable stewardship for stronger places and communities.",
+    text: "Responsible use of public funds for stronger places and communities.",
     detail:
       "Project timelines, expenditure support, and funding restrictions can make housing and community development awards complex. We support clear project records, budget monitoring, and documentation appropriate to the award.",
   },
@@ -134,7 +134,7 @@ export const articles = [
     category: "Getting started",
     title: "What Happens After Your Organization Receives a Government Grant?",
     intro:
-      "The award is a beginning. A thoughtful post-award routine helps turn funding into sustained community impact.",
+      "Receiving an award is the beginning. A clear routine for managing the funding helps turn that award into lasting community impact.",
     sections: [
       [
         "Start with the award documents",
@@ -221,7 +221,7 @@ export const articles = [
       ],
       [
         "Connect reports to records",
-        "Check that reported expenditures reconcile to the underlying ledger. Assemble support schedules that explain how totals were calculated and flag unresolved differences for follow-up.",
+        "Check that the spending in your reports matches your accounting records. Prepare schedules that explain how each total was calculated and note any differences that still need attention.",
       ],
       [
         "Organize supporting information",
@@ -235,14 +235,14 @@ export const articles = [
   },
   {
     slug: "internal-controls",
-    category: "Fiscal stewardship",
+    category: "Financial controls",
     title: "Why Strong Internal Controls Matter for Nonprofits",
     intro:
       "Internal controls are practical habits that protect resources, support staff, and make financial decisions easier to explain.",
     sections: [
       [
         "Separate key responsibilities where possible",
-        "Different people should ideally authorize, record, and reconcile transactions. In a small team, a documented independent review can help address limited staffing.",
+        "Different people should ideally approve payments, record them, and check that the accounts match. In a small team, a documented review by someone else can help address limited staffing.",
       ],
       [
         "Make approval visible",
@@ -286,3 +286,13 @@ export const articles = [
 ];
 export const guidanceNotice =
   "These resources provide general education, not legal, accounting, or award-specific compliance advice. Requirements vary by funding source, award terms, and applicable law. Review your agreement and consult your funder or qualified adviser about your situation.";
+
+export const resourceTopics = [
+  ...new Set(articles.map((article) => article.category)),
+].map((label) => ({
+  label,
+  slug: label
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, ""),
+}));

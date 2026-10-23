@@ -93,8 +93,8 @@ export function ServicesRail() {
           <p className="eyebrow">EXPERTISE WITH PURPOSE</p>
           <h2>Specialized expertise. Clear financial direction.</h2>
           <p>
-            Coordinated post-award support that connects your approved budget,
-            supporting records, reimbursement requests, and financial reports.
+            Support for every financial step after your grant is awarded:
+            budgets, records, payment requests, and clear reports.
           </p>
         </div>
         <div className="rail-toolbar">

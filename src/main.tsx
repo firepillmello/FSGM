@@ -30,9 +30,11 @@ import {
   industries,
   articles,
   guidanceNotice,
+  resourceTopics,
 } from "./content";
 import "./site.css";
 import { ServicesRail } from "./ServicesRail";
+import { PageFlow } from "./PageFlow";
 function Logo({ light = false }: { light?: boolean }) {
   return (
     <Link
@@ -88,23 +90,31 @@ function Header() {
   const [open, setOpen] = useState(false);
   const servicesDropdown = useRef<HTMLDetailsElement>(null);
   const audiencesDropdown = useRef<HTMLDetailsElement>(null);
+  const resourcesDropdown = useRef<HTMLDetailsElement>(null);
   const location = useLocation();
   useEffect(() => {
     setOpen(false);
     if (servicesDropdown.current) servicesDropdown.current.open = false;
     if (audiencesDropdown.current) audiencesDropdown.current.open = false;
+    if (resourcesDropdown.current) resourcesDropdown.current.open = false;
   }, [location]);
   useEffect(() => {
     const closeOutside = (event: PointerEvent) => {
-      for (const ref of [servicesDropdown, audiencesDropdown])
+      for (const ref of [
+        servicesDropdown,
+        audiencesDropdown,
+        resourcesDropdown,
+      ])
         if (ref.current && !ref.current.contains(event.target as Node))
           ref.current.open = false;
     };
     const escape = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
-      const expanded = [servicesDropdown, audiencesDropdown].find(
-        (ref) => ref.current?.open,
-      )?.current;
+      const expanded = [
+        servicesDropdown,
+        audiencesDropdown,
+        resourcesDropdown,
+      ].find((ref) => ref.current?.open)?.current;
       if (expanded) {
         expanded.open = false;
         expanded.querySelector("summary")?.focus();
@@ -140,7 +150,11 @@ function Header() {
           aria-label="Main navigation"
         >
           {site.navigation.map(([label, path]) => {
-            if (label !== "Services" && label !== "Who We Serve")
+            if (
+              label !== "Services" &&
+              label !== "Who We Serve" &&
+              label !== "Resources"
+            )
               return (
                 <Link
                   key={path}
@@ -153,24 +167,51 @@ function Header() {
                 </Link>
               );
             const isServices = label === "Services";
-            const ref = isServices ? servicesDropdown : audiencesDropdown;
-            const other = isServices ? audiencesDropdown : servicesDropdown;
-            const items = isServices ? services : industries;
-            const prefix = isServices ? "service" : "industry";
+            const isResources = label === "Resources";
+            const ref = isResources
+              ? resourcesDropdown
+              : isServices
+                ? servicesDropdown
+                : audiencesDropdown;
+            const items = isResources
+              ? resourceTopics.map((topic) => ({
+                  title: topic.label,
+                  target: `resources-${topic.slug}`,
+                }))
+              : (isServices ? services : industries).map((item, index) => ({
+                  title: item.title,
+                  target: `${isServices ? "service" : "industry"}-${index}`,
+                }));
+            const prefix = isResources
+              ? "resources"
+              : isServices
+                ? "service"
+                : "industry";
             return (
               <details
                 key={label}
                 ref={ref}
-                className={`nav-dropdown ${isServices ? "services-dropdown" : "audiences-dropdown"}`}
+                className={`nav-dropdown ${isResources ? "resources-dropdown" : isServices ? "services-dropdown" : "audiences-dropdown"}`}
                 onToggle={(event) => {
-                  if (event.currentTarget.open && other.current)
-                    other.current.open = false;
+                  if (event.currentTarget.open)
+                    for (const candidate of [
+                      servicesDropdown,
+                      audiencesDropdown,
+                      resourcesDropdown,
+                    ]) {
+                      if (
+                        candidate.current &&
+                        candidate.current !== event.currentTarget
+                      )
+                        candidate.current.open = false;
+                    }
                 }}
               >
                 <summary
                   className={
                     current.startsWith(`#${prefix}`) ||
-                    current === path.slice(1)
+                    current === path.slice(1) ||
+                    (isResources && location.pathname.startsWith("/resources/"))
                       ? "active"
                       : ""
                   }
@@ -179,20 +220,23 @@ function Header() {
                   <ChevronDown size={15} />
                 </summary>
                 <div className="dropdown-menu services-menu">
-                  <Link className="dropdown-overview" to={path}>
-                    {isServices
-                      ? "Explore all services"
-                      : "Explore who we serve"}
+                  <Link
+                    className="dropdown-overview"
+                    to={isResources ? "/#resources-all" : path}
+                  >
+                    {isResources
+                      ? "Explore all resources"
+                      : isServices
+                        ? "Explore all services"
+                        : "Explore who we serve"}
                     <ArrowRight size={16} />
                   </Link>
                   {items.map((item, index) => (
                     <Link
                       key={item.title}
-                      to={`/#${prefix}-${index}`}
+                      to={`/#${item.target}`}
                       aria-current={
-                        current === `#${prefix}-${index}`
-                          ? "location"
-                          : undefined
+                        current === `#${item.target}` ? "location" : undefined
                       }
                     >
                       <span>0{index + 1}</span>
@@ -243,7 +287,7 @@ function CommunityVisual() {
       <figcaption>
         <span className="eyebrow">THE PURPOSE BEHIND EVERY DOLLAR</span>
         <strong>
-          Strong stewardship.
+          Clear finances.
           <br />
           <em>Lasting purpose.</em>
         </strong>
@@ -289,7 +333,7 @@ function Home() {
       <section className="home-hero container" id="top" tabIndex={-1}>
         <div className="hero-copy">
           <p className="eyebrow">
-            FISCAL STEWARDSHIP <i /> COMPLIANCE <i /> COMMUNITY
+            GRANT FINANCES <i /> CONFIDENCE <i /> COMMUNITY
           </p>
           <h1>
             Every Grant
@@ -299,10 +343,10 @@ function Home() {
             <em>Every Dollar Deserves Accountability.</em>
           </h1>
           <p>
-            FSGM Advisory provides specialized fiscal management and advisory
-            services for organizations entrusted with federal and state funding.
-            We help you strengthen accountability, navigate financial
-            requirements, and protect the mission behind every grant.
+            FSGM Advisory helps organizations manage federal and state grant
+            funding with clear budgets, reliable reports, and practical
+            financial guidance. We help you understand the requirements, keep
+            spending on track, and protect the purpose behind every grant.
           </p>
           <div className="button-row">
             <Button to="/#services">Explore Our Services</Button>
@@ -390,7 +434,7 @@ function Home() {
               alt="Historic riverside community and a bridge surrounded by autumn trees"
             />
             <figcaption>
-              Community is the reason. Stewardship is the responsibility.
+              Community is the reason. Responsible funding is the promise.
             </figcaption>
           </figure>
           <div className="director-note">
@@ -454,7 +498,7 @@ function Home() {
               ],
               [
                 "Right-sized support",
-                "A defined scope of support that reflects your funding complexity, staffing, and administrative capacity.",
+                "Support shaped around the grants you manage, the people on your team, and the time you have available.",
               ],
               [
                 "Education at the center",
@@ -465,7 +509,7 @@ function Home() {
                 "A working relationship that connects leadership, program staff, and financial responsibilities.",
               ],
               [
-                "Purpose-led stewardship",
+                "Responsible funding",
                 "Financial oversight grounded in the programs, people, and communities your funding is intended to serve.",
               ],
             ].map(([title, text], i) => (
@@ -497,7 +541,7 @@ function Home() {
             ],
             [
               "Manage",
-              "We support a consistent rhythm of expenditure reviews, reconciliations, reimbursement preparation, and reporting.",
+              "We regularly review spending, check that records match, prepare payment requests, and keep reports on track.",
             ],
             [
               "Strengthen",
@@ -538,7 +582,7 @@ function Home() {
             confident process.
           </p>
           <Link className="text-link" to="/resources/after-the-award">
-            Explore the post-award journey <ArrowUpRight size={17} />
+            Learn what happens after the award <ArrowUpRight size={17} />
           </Link>
         </div>
       </section>
@@ -552,13 +596,13 @@ function ResourceCard({ article }: { article: (typeof articles)[number] }) {
     <Link className="resource-card" to={`/resources/${article.slug}`}>
       <div className="resource-art">
         <img
-          src={`${import.meta.env.BASE_URL}images/${article.category === "Getting started" ? "pennsylvania-capitol" : article.category === "Leadership" || article.category === "Fiscal stewardship" ? "collaboration" : "financial-planning"}.png`}
+          src={`${import.meta.env.BASE_URL}images/${article.category === "Getting started" ? "pennsylvania-capitol" : article.category === "Leadership" || article.category === "Financial controls" ? "collaboration" : "financial-planning"}.png`}
           loading="lazy"
           alt={
             article.category === "Getting started"
               ? "Pennsylvania State Capitol exterior"
               : article.category === "Leadership" ||
-                  article.category === "Fiscal stewardship"
+                  article.category === "Financial controls"
                 ? "Illustrative professionals discussing financial documents"
                 : "Charts and supporting records prepared for financial planning"
           }
@@ -574,9 +618,19 @@ function ResourceCard({ article }: { article: (typeof articles)[number] }) {
   );
 }
 function ResourcesSection() {
+  const { hash } = useLocation();
   const [expanded, setExpanded] = useState(false);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All resources");
+  useEffect(() => {
+    const slug = /^#resources-(.+)$/.exec(hash)?.[1];
+    const topic = resourceTopics.find((item) => item.slug === slug);
+    if (slug === "all" || topic) {
+      setExpanded(true);
+      setCategory(topic?.label || "All resources");
+      setSearch("");
+    }
+  }, [hash]);
   const filtered = articles.filter(
     (article) =>
       (category === "All resources" || article.category === category) &&
@@ -991,7 +1045,9 @@ function ScrollToTop() {
     const fragment = location.hash.slice(1);
     const timer = window.setTimeout(() => {
       if (fragment) {
-        const target = document.getElementById(fragment);
+        const target = document.getElementById(
+          fragment.startsWith("resources-") ? "resources" : fragment,
+        );
         target?.scrollIntoView({
           block: "start",
           behavior:
@@ -1001,7 +1057,7 @@ function ScrollToTop() {
               : "smooth",
         });
         target?.focus({ preventScroll: true });
-      } else window.scrollTo(0, 0);
+      } else window.scrollTo({ top: 0, behavior: "instant" });
     }, 30);
     const article = articles.find(
       (a) => location.pathname === `/resources/${a.slug}`,
@@ -1043,6 +1099,7 @@ function App() {
   return (
     <>
       <ScrollToTop />
+      <PageFlow />
       <a
         className="skip-link"
         href="#main"

@@ -363,3 +363,116 @@ test("mobile Who We Serve dropdown selects without opening a new page", async ({
     page.getByRole("button", { name: "Open navigation" }),
   ).toHaveAttribute("aria-expanded", "false");
 });
+
+test("Resources dropdown filters the existing section and shares menu behavior", async ({
+  page,
+}) => {
+  await page.goto("./");
+  await page.locator(".services-dropdown > summary").click();
+  await page.locator(".resources-dropdown > summary").click();
+  await expect(page.locator(".services-dropdown")).not.toHaveAttribute(
+    "open",
+    "",
+  );
+  await page
+    .locator(".resources-dropdown")
+    .getByRole("link", { name: /Financial controls/ })
+    .click();
+  await expect(page).toHaveURL(/#\/#resources-financial-controls$/);
+  await expect(page.getByLabel("Browse by topic")).toHaveValue(
+    "Financial controls",
+  );
+  await expect(page.locator(".resource-card")).toHaveCount(1);
+  await expect(page.locator(".resource-card")).toContainText(
+    "Why Strong Internal Controls Matter",
+  );
+  await expect(page.locator("#resources")).toBeInViewport();
+  await expect(page.locator(".resources-dropdown")).not.toHaveAttribute(
+    "open",
+    "",
+  );
+  await page.locator(".resources-dropdown > summary").click();
+  await page
+    .locator(".resources-dropdown")
+    .getByRole("link", { name: "Explore all resources" })
+    .click();
+  await expect(page.locator(".resource-card")).toHaveCount(6);
+  await page.locator(".resources-dropdown > summary").click();
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".resources-dropdown > summary")).toBeFocused();
+  await expect(page.locator(".resources-dropdown")).not.toHaveAttribute(
+    "open",
+    "",
+  );
+});
+
+test("Resources dropdown works on small phones without menu overflow", async ({
+  page,
+}) => {
+  for (const width of [320, 375, 390, 768]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto("./");
+    await page.getByRole("button", { name: "Open navigation" }).click();
+    await page.locator(".resources-dropdown > summary").click();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBeTruthy();
+    await page
+      .locator(".resources-dropdown")
+      .getByRole("link", { name: /Getting started/ })
+      .click();
+    await expect(page.getByLabel("Browse by topic")).toHaveValue(
+      "Getting started",
+    );
+    await expect(page.locator(".resource-card")).toHaveCount(1);
+    await expect(
+      page.getByRole("button", { name: "Open navigation" }),
+    ).toHaveAttribute("aria-expanded", "false");
+  }
+});
+
+test("key reading text stays large on desktop and mobile with reduced motion available", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("./");
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    const small = await page
+      .locator(
+        ".hero-copy > p:not(.eyebrow), .service-card > p, .industry-card > p, .resource-card > p:not(.eyebrow)",
+      )
+      .evaluateAll((elements) =>
+        elements
+          .filter(
+            (element) => parseFloat(getComputedStyle(element).fontSize) < 18,
+          )
+          .map((element) => element.textContent),
+      );
+    expect(small, `${width}px reading text`).toEqual([]);
+    expect(
+      await page.evaluate(
+        () => getComputedStyle(document.documentElement).scrollBehavior,
+      ),
+    ).toBe("auto");
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            document
+              .getAnimations()
+              .filter((animation) => animation.playState === "running").length,
+        ),
+      )
+      .toBe(0);
+  }
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  expect(
+    await page.evaluate(
+      () => getComputedStyle(document.documentElement).scrollBehavior,
+    ),
+  ).toBe("smooth");
+});

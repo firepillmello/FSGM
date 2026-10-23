@@ -20,7 +20,8 @@ Default local project path: `/FSGM/`. Navigation uses hash routes, so article li
 - `src/content.ts`: verified business information, contact channels, scheduling URL, navigation, services, industries, and articles. Blank contact values remain hidden. Do not invent credentials, biographies, or contact details.
 - `src/main.tsx`: home sections, navigation, inline disclosures, article routes, form behavior, and metadata.
 - `src/ServicesRail.tsx`: horizontal service rail, manual arrow and swipe controls, selected service details, and contact handoff.
-- `src/site.css`: the single design system, including the brochure palette, imagery, typography, responsive layouts, hover states, and accessibility preferences.
+- `src/site.css`: the single design system, including the brochure palette, larger reading text, responsive layouts, smooth scrolling, hover states, and accessibility preferences.
+- `src/PageFlow.tsx`: one-time scroll entrances that keep text fully visible and cancel motion when reduced motion is requested.
 - `public/brandmark.svg`: original FSGM letter-art mark.
 - `public/favicon.svg`: matching high-contrast favicon.
 
@@ -56,7 +57,7 @@ npm test
 CHROMIUM_PATH=/usr/bin/chromium npm test
 ```
 
-Browser tests cover same-page navigation, service and audience dropdown selection, inline service details, manual horizontal scrolling, article deep links, expanded resource filters, legacy redirects, contact validation, preserved form entries, mobile navigation, keyboard access, and reduced-motion support. Responsive checks cover 14 widths from 320px to 1920px. Offscreen service cards are intentionally clipped within their own horizontal rail; the document must not overflow. Tests start a Vite server automatically. No private data is used.
+Browser tests cover same-page navigation, service, audience, and resource-topic dropdown selection, inline service details, manual horizontal scrolling, article deep links, expanded resource filters, legacy redirects, contact validation, preserved form entries, mobile navigation, keyboard access, and reduced-motion support. Responsive checks cover 14 widths from 320px to 1920px. Offscreen service cards are intentionally clipped within their own horizontal rail; the document must not overflow. Tests start a Vite server automatically. No private data is used.
 
 ## Navigation and content organization
 
@@ -78,3 +79,11 @@ No analytics, fake testimonials, fabricated qualifications, or claims of governm
 Colors are taken from the supplied trifold: navy `#082C45`, teal `#176276`, deep teal `#0B3E52`, gold `#D6B76D`, and warm white `#FCFBF7`. Gold is used decoratively on light backgrounds and for high-contrast accents on navy.
 
 About Us focuses on community purpose and the Fiscal Director perspective behind the service. Audience categories belong only in Who We Serve. No founder identity, credentials, or biography are invented.
+
+## Readability and resource topics
+
+Primary reading text is at least 18px across phone, tablet, and desktop layouts. Secondary labels retain a clear hierarchy, and the logo descriptor wraps rather than shrinking on small screens. Public-facing copy uses clear phrases such as responsible funding, spending records, and payment requests, while retaining useful service terms such as Fiscal Director and internal controls with explanations.
+
+The Resources dropdown is generated from `resourceTopics` in `src/content.ts`. Choosing a topic expands and filters the existing resource center, for example `/FSGM/#/#resources-financial-controls`; `/#resources-all` opens the full library. It uses the same keyboard, Escape, outside-click, and mobile behavior as the other dropdowns.
+
+Section links scroll smoothly, while direct deep links position immediately. Reduced-motion preferences turn smooth scrolling and entrance animation off. Scroll entrances use transforms only: reading content is never hidden or faded out. Services remain manually controlled; playback has not been reintroduced.

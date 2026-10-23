@@ -26,6 +26,9 @@
 * {
   box-sizing: border-box;
 }
+html {
+  scroll-behavior: smooth;
+}
 body {
   margin: 0;
 }
@@ -85,12 +88,12 @@ h3 {
   letter-spacing: -0.025em;
 }
 h4 {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   line-height: 1.7;
 }
 p {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
   line-height: 1.9;
   color: var(--muted);
@@ -138,7 +141,7 @@ article[tabindex="-1"]:focus {
   scroll-margin-top: 124px;
 }
 .eyebrow {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--teal);
   letter-spacing: 1.8px;
@@ -173,7 +176,7 @@ article[tabindex="-1"]:focus {
   color: #fff;
   border: 1px solid var(--navy);
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   line-height: 1.65;
   box-shadow: 0 6px 18px -13px #082c4590;
@@ -195,7 +198,7 @@ article[tabindex="-1"]:focus {
   gap: 13px;
   padding-block: 6px;
   border-bottom: 1px solid #9bb5bd;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   line-height: 1.7;
 }
@@ -273,7 +276,9 @@ header {
 }
 .logo small {
   display: block;
-  font-size: 7px;
+  white-space: normal;
+  max-width: 230px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.8px;
   line-height: 1.5;
@@ -286,7 +291,7 @@ nav {
 }
 nav > a,
 .nav-dropdown > summary {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   line-height: 1.7;
   position: relative;
@@ -362,14 +367,14 @@ nav > a[aria-current="location"]:after {
   align-items: center;
   gap: 12px;
   padding: 13px 12px;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.65;
   border-radius: 3px;
   transition: background 0.2s;
 }
 .dropdown-menu > a > span {
   color: var(--teal);
-  font-size: 10px;
+  font-size: 12px;
 }
 .dropdown-menu > a > svg {
   margin-left: auto;
@@ -398,7 +403,7 @@ nav > a[aria-current="location"]:after {
   align-items: center;
   flex-wrap: wrap;
   gap: 9px;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1.1px;
 }
 .hero-copy .eyebrow i {
@@ -412,7 +417,7 @@ nav > a[aria-current="location"]:after {
   margin-top: 14px;
 }
 .hero-copy > p:not(.eyebrow) {
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.95;
   margin-block: 29px;
 }
@@ -422,7 +427,7 @@ nav > a[aria-current="location"]:after {
   gap: 12px;
   margin-top: 34px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.8;
 }
 .tiny-line {
@@ -474,7 +479,7 @@ nav > a[aria-current="location"]:after {
   align-items: center;
   gap: 10px;
   border: 1px solid #ffffff35;
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 1.6px;
   font-weight: 600;
 }
@@ -495,7 +500,7 @@ nav > a[aria-current="location"]:after {
 .community-visual figcaption > .eyebrow {
   display: block;
   color: #f0d99d;
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 1.6px;
   margin-bottom: 15px;
 }
@@ -512,7 +517,7 @@ nav > a[aria-current="location"]:after {
 }
 .image-caption {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   margin-top: 18px;
   color: #e3ecef;
 }
@@ -525,7 +530,7 @@ nav > a[aria-current="location"]:after {
   padding: 27px 25px;
   background: var(--navy);
   color: #fff;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1.9px;
   line-height: 1.8;
   font-weight: 500;
@@ -573,7 +578,7 @@ nav > a[aria-current="location"]:after {
   object-fit: cover;
 }
 .story-image figcaption {
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.8;
   padding: 13px 5px 3px;
   color: var(--muted);
@@ -587,7 +592,7 @@ nav > a[aria-current="location"]:after {
 }
 .director-note .eyebrow {
   color: #ead094;
-  font-size: 9px;
+  font-size: 12px;
   margin-bottom: 20px;
 }
 .director-note h3 {
@@ -595,11 +600,11 @@ nav > a[aria-current="location"]:after {
 }
 .director-note p:not(.eyebrow) {
   color: #d9e6e7;
-  font-size: 14px;
+  font-size: 18px;
   margin-block: 20px;
 }
 .director-note .text-link {
-  font-size: 12px;
+  font-size: 14px;
   border-color: #7296a4;
 }
 .director-note .text-link svg {
@@ -613,7 +618,7 @@ nav > a[aria-current="location"]:after {
   align-items: center;
   gap: 11px;
   list-style: none;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   line-height: 1.8;
   min-height: 44px;
@@ -648,7 +653,7 @@ nav > a[aria-current="location"]:after {
   margin-bottom: 22px;
 }
 .about-disclosure p {
-  font-size: 15px;
+  font-size: 18px;
 }
 .services-section {
   background: var(--mist);
@@ -662,13 +667,13 @@ nav > a[aria-current="location"]:after {
   margin-bottom: 26px;
 }
 .rail-toolbar > p {
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.8;
 }
 .rail-toolbar > p > span {
   display: block;
   font-weight: 400;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 4px;
 }
@@ -733,14 +738,14 @@ nav > a[aria-current="location"]:after {
   color: var(--teal);
 }
 .card-top > span {
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 1px;
 }
 .service-card h3 {
   font-size: 26px;
 }
 .service-card p {
-  font-size: 15px;
+  font-size: 18px;
   line-height: 1.85;
   margin-block: 20px 26px;
 }
@@ -748,7 +753,7 @@ nav > a[aria-current="location"]:after {
   margin-top: auto;
   align-self: flex-start;
   border: 0;
-  font-size: 12px;
+  font-size: 14px;
 }
 .service-card.is-selected {
   border-color: var(--teal);
@@ -777,7 +782,7 @@ nav > a[aria-current="location"]:after {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 14px;
   min-height: 36px;
 }
 .service-detail {
@@ -801,7 +806,7 @@ nav > a[aria-current="location"]:after {
   margin-block: 25px;
 }
 .service-detail-copy p {
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.9;
   margin-block: 10px 27px;
 }
@@ -845,7 +850,7 @@ nav > a[aria-current="location"]:after {
 }
 .industry-card > p {
   color: #d6e3e7;
-  font-size: 14px;
+  font-size: 18px;
   line-height: 1.85;
   margin-top: 20px;
 }
@@ -855,15 +860,15 @@ nav > a[aria-current="location"]:after {
 }
 .industry-card summary {
   color: #efdaa5;
-  font-size: 12px;
+  font-size: 14px;
 }
 .industry-card .inline-disclosure p {
-  font-size: 14px;
+  font-size: 18px;
   color: #e0eaed;
   line-height: 1.85;
 }
 .industry-card .text-link {
-  font-size: 12px;
+  font-size: 14px;
   color: #fff;
 }
 .industry-card .text-link > svg {
@@ -908,7 +913,7 @@ nav > a[aria-current="location"]:after {
   border: 0;
 }
 .advantages > div > span {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--teal);
   padding-top: 7px;
 }
@@ -916,7 +921,7 @@ nav > a[aria-current="location"]:after {
   font-size: 25px;
 }
 .advantages p {
-  font-size: 14px;
+  font-size: 18px;
   line-height: 1.85;
   margin-top: 10px;
 }
@@ -938,7 +943,7 @@ nav > a[aria-current="location"]:after {
   font-size: 27px;
 }
 .approach p {
-  font-size: 14px;
+  font-size: 18px;
   margin-top: 18px;
   line-height: 1.9;
 }
@@ -962,7 +967,7 @@ nav > a[aria-current="location"]:after {
   object-fit: cover;
 }
 .education-art figcaption {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 1.3px;
   text-transform: uppercase;
@@ -975,7 +980,7 @@ nav > a[aria-current="location"]:after {
 }
 .education-feature .eyebrow {
   color: #e9d496;
-  font-size: 9px;
+  font-size: 12px;
 }
 .education-feature h2 em {
   color: #e2c67f;
@@ -983,7 +988,7 @@ nav > a[aria-current="location"]:after {
 .education-feature p:not(.eyebrow) {
   color: #d9e5e8;
   margin-block: 25px;
-  font-size: 15px;
+  font-size: 18px;
 }
 .education-feature .text-link {
   color: #fff;
@@ -1024,7 +1029,7 @@ nav > a[aria-current="location"]:after {
   transition: transform 0.5s ease;
 }
 .resource-card .eyebrow {
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 1.4px;
   margin-bottom: 16px;
 }
@@ -1032,14 +1037,14 @@ nav > a[aria-current="location"]:after {
   font-size: 27px;
 }
 .resource-card > p:not(.eyebrow) {
-  font-size: 14px;
+  font-size: 18px;
   line-height: 1.85;
   margin-block: 19px 25px;
 }
 .resource-card .text-link {
   margin-top: auto;
   align-self: flex-start;
-  font-size: 12px;
+  font-size: 14px;
 }
 .resource-expand {
   margin-top: 35px;
@@ -1071,14 +1076,14 @@ nav > a[aria-current="location"]:after {
   border: 0;
   padding: 15px 0;
   min-height: 52px;
-  font-size: 15px;
+  font-size: 17px;
   color: var(--navy);
 }
 .category-label {
   display: flex;
   align-items: center;
   gap: 15px;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.8;
 }
 .category-label select {
@@ -1087,10 +1092,10 @@ nav > a[aria-current="location"]:after {
   border: 1px solid #a2bdc5;
   border-radius: 4px;
   min-height: 52px;
-  font-size: 13px;
+  font-size: 15px;
 }
 .result-count {
-  font-size: 12px;
+  font-size: 14px;
   margin-block: 22px 30px;
 }
 .empty-state {
@@ -1100,7 +1105,7 @@ nav > a[aria-current="location"]:after {
   margin-block: 20px;
 }
 .education-notice {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 400;
   line-height: 1.9;
   background: var(--mist);
@@ -1155,7 +1160,7 @@ nav > a[aria-current="location"]:after {
 }
 .article-end > p {
   margin-bottom: 25px;
-  font-size: 16px;
+  font-size: 18px;
 }
 .contact-section {
   background: #eaf0ef;
@@ -1190,7 +1195,7 @@ nav > a[aria-current="location"]:after {
   align-items: center;
   gap: 12px;
   margin-top: 30px;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.8;
 }
 .location > svg {
@@ -1217,12 +1222,12 @@ nav > a[aria-current="location"]:after {
   color: var(--teal);
 }
 .preview-notice strong {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   line-height: 1.7;
 }
 .preview-notice p {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.85;
   margin-top: 6px;
@@ -1237,7 +1242,7 @@ nav > a[aria-current="location"]:after {
   flex-direction: column;
   gap: 10px;
   min-width: 0;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   line-height: 1.7;
 }
@@ -1256,7 +1261,7 @@ nav > a[aria-current="location"]:after {
   border-radius: 4px;
   padding: 12px;
   color: var(--navy);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
   line-height: 1.7;
   transition:
@@ -1273,7 +1278,7 @@ nav > a[aria-current="location"]:after {
   grid-column: 1/-1;
 }
 .small-note {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.9;
   color: var(--muted);
@@ -1288,7 +1293,7 @@ nav > a[aria-current="location"]:after {
   padding: 20px;
   background: #e4f0ef;
   border: 1px solid #a3bec3;
-  font-size: 14px;
+  font-size: 16px;
   border-radius: 4px;
   margin-top: 22px;
 }
@@ -1296,7 +1301,7 @@ nav > a[aria-current="location"]:after {
   border-top: 1px solid var(--line);
   margin-top: 25px;
   padding-top: 20px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 400;
   line-height: 1.9;
 }
@@ -1333,17 +1338,17 @@ footer {
 }
 .footer-location {
   display: block;
-  font-size: 12px;
+  font-size: 14px;
   color: #d6e3e7;
   margin-top: 20px;
 }
 footer .eyebrow {
   color: #e5c77e;
-  font-size: 9px;
+  font-size: 12px;
 }
 .footer-top > div:nth-child(2) > a {
   display: block;
-  font-size: 13px;
+  font-size: 15px;
   color: #dce7e9;
   margin-block: 16px;
 }
@@ -1353,7 +1358,7 @@ footer .eyebrow {
 }
 .footer-note .text-link {
   margin-top: 25px;
-  font-size: 12px;
+  font-size: 14px;
 }
 .footer-note .text-link > svg {
   color: var(--gold);
@@ -1366,7 +1371,7 @@ footer .eyebrow {
   gap: 18px;
   padding-top: 22px;
   border-top: 1px solid #527182;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.85;
   color: #d2e0e4;
 }
@@ -1374,7 +1379,7 @@ footer .eyebrow {
   border: 0;
   background: transparent;
   color: inherit;
-  font-size: 11px;
+  font-size: 13px;
   min-height: 40px;
   padding: 0;
 }
@@ -1470,7 +1475,7 @@ footer .eyebrow {
   }
   nav > a,
   .nav-dropdown > summary {
-    font-size: 12px;
+    font-size: 14px;
   }
   .logo strong {
     font-size: 25px;
@@ -1479,7 +1484,7 @@ footer .eyebrow {
     font-size: 21px;
   }
   .logo small {
-    font-size: 6.5px;
+    font-size: 10px;
   }
   .lettermark {
     width: 48px;
@@ -1541,7 +1546,7 @@ footer .eyebrow {
   }
   nav > a,
   .nav-dropdown > summary {
-    font-size: 15px;
+    font-size: 17px;
     padding-block: 12px;
   }
   .nav-dropdown > summary {
@@ -1560,7 +1565,7 @@ footer .eyebrow {
     backdrop-filter: none;
   }
   .dropdown-menu > a {
-    font-size: 14px;
+    font-size: 16px;
   }
   #top,
   #about,
@@ -1580,7 +1585,7 @@ footer .eyebrow {
     font-size: 47px;
   }
   .hero-copy > p:not(.eyebrow) {
-    font-size: 15px;
+    font-size: 18px;
   }
   .community-visual {
     min-height: 620px;
@@ -1595,7 +1600,7 @@ footer .eyebrow {
   .image-kicker {
     left: 20px;
     top: 20px;
-    font-size: 7px;
+    font-size: 10px;
   }
   .button-row {
     align-items: flex-start;
@@ -1604,7 +1609,7 @@ footer .eyebrow {
   }
   .principle-strip {
     gap: 30px;
-    font-size: 8px;
+    font-size: 11px;
   }
   .story-section {
     grid-template-columns: 1.2fr 0.8fr;
@@ -1620,7 +1625,7 @@ footer .eyebrow {
     font-size: 26px;
   }
   .director-note .eyebrow {
-    font-size: 8px;
+    font-size: 11px;
   }
   .service-card {
     flex-basis: calc((100% - 24px) / 2);
@@ -1708,11 +1713,11 @@ footer .eyebrow {
     font-size: clamp(39px, 7.4vw, 54px);
   }
   .hero-copy .eyebrow {
-    font-size: 9px;
+    font-size: 12px;
     letter-spacing: 0.8px;
   }
   .hero-copy > p:not(.eyebrow) {
-    font-size: 17px;
+    font-size: 18px;
     line-height: 1.9;
   }
   .button-row {
@@ -1734,12 +1739,12 @@ footer .eyebrow {
     font-size: 34px;
   }
   .image-kicker {
-    font-size: 8px;
+    font-size: 11px;
   }
   .principle-strip {
     gap: 22px;
     padding: 24px 20px;
-    font-size: 8px;
+    font-size: 11px;
     letter-spacing: 1px;
   }
   .strip-dot {
@@ -1769,7 +1774,7 @@ footer .eyebrow {
     font-size: 25px;
   }
   .director-note p:not(.eyebrow) {
-    font-size: 13px;
+    font-size: 18px;
   }
   .section-heading {
     margin-bottom: 35px;
@@ -1783,13 +1788,13 @@ footer .eyebrow {
     font-size: 28px;
   }
   .service-card p {
-    font-size: 16px;
+    font-size: 18px;
   }
   .rail-toolbar > p {
-    font-size: 12px;
+    font-size: 14px;
   }
   .rail-toolbar > p > span {
-    font-size: 11px;
+    font-size: 13px;
   }
   .rail-controls {
     gap: 7px;
@@ -1808,7 +1813,7 @@ footer .eyebrow {
     display: none;
   }
   .detail-topline .eyebrow {
-    font-size: 9px;
+    font-size: 12px;
   }
   .industry-grid {
     gap: 24px;
@@ -1827,10 +1832,10 @@ footer .eyebrow {
     font-size: 38px;
   }
   .advantages p {
-    font-size: 15px;
+    font-size: 18px;
   }
   .approach p {
-    font-size: 15px;
+    font-size: 18px;
   }
   .education-feature {
     grid-template-columns: 1fr;
@@ -1844,7 +1849,7 @@ footer .eyebrow {
     font-size: 34px;
   }
   .education-feature p:not(.eyebrow) {
-    font-size: 16px;
+    font-size: 18px;
   }
   .resource-grid {
     grid-template-columns: 1fr;
@@ -1860,10 +1865,10 @@ footer .eyebrow {
     font-size: 30px;
   }
   .resource-card > p:not(.eyebrow) {
-    font-size: 16px;
+    font-size: 18px;
   }
   .resource-card .text-link {
-    font-size: 13px;
+    font-size: 15px;
   }
   .category-label {
     justify-content: space-between;
@@ -1894,7 +1899,7 @@ footer .eyebrow {
   }
   .education-notice {
     padding: 23px;
-    font-size: 13px;
+    font-size: 15px;
   }
   .contact-section {
     padding-top: 65px;
@@ -1951,7 +1956,7 @@ footer .eyebrow {
     font-size: 29px;
   }
   .director-note p:not(.eyebrow) {
-    font-size: 15px;
+    font-size: 18px;
   }
 }
 @media (max-width: 480px) {
@@ -1973,8 +1978,10 @@ footer .eyebrow {
     font-size: 19px;
   }
   .logo small {
-    font-size: 6px;
-    letter-spacing: 0.55px;
+    font-size: 10px;
+    max-width: 155px;
+    line-height: 1.4;
+    letter-spacing: 0.25px;
   }
   .menu-button {
     padding: 8px;
@@ -1986,7 +1993,7 @@ footer .eyebrow {
     gap: 22px;
   }
   .hero-note {
-    font-size: 10px;
+    font-size: 12px;
   }
   .community-visual {
     min-height: 445px;
@@ -1999,13 +2006,13 @@ footer .eyebrow {
     font-size: 30px;
   }
   .community-visual figcaption > .eyebrow {
-    font-size: 7px;
+    font-size: 10px;
   }
   .story-copy h2 {
     font-size: 36px;
   }
   .story-copy .story-lead {
-    font-size: 17px;
+    font-size: 18px;
   }
   .about-disclosure > div {
     padding: 23px;
@@ -2027,10 +2034,10 @@ footer .eyebrow {
     font-size: 28px;
   }
   .industry-card > p {
-    font-size: 15px;
+    font-size: 18px;
   }
   .industry-card .inline-disclosure p {
-    font-size: 15px;
+    font-size: 18px;
   }
   .approach {
     grid-template-columns: 1fr;
@@ -2104,5 +2111,57 @@ footer .eyebrow {
   .image-kicker {
     background: var(--navy);
     backdrop-filter: none;
+  }
+}
+
+/* Topic navigation shares the same disclosure behavior as the other menus. */
+.resources-dropdown .dropdown-menu {
+  left: auto;
+  right: -16px;
+}
+.dropdown-menu {
+  max-height: min(600px, calc(100dvh - 145px));
+  overflow-y: auto;
+}
+.dropdown-menu > a {
+  min-height: 48px;
+}
+@keyframes disclosure-arrive {
+  from {
+    transform: translateY(-5px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.nav-dropdown[open] > .dropdown-menu {
+  animation: disclosure-arrive 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.inline-disclosure[open] > div {
+  animation: disclosure-arrive 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (max-width: 1050px) {
+  .resources-dropdown .dropdown-menu {
+    position: static;
+    width: 100%;
+  }
+  .dropdown-menu {
+    max-height: none;
+  }
+}
+@media (max-width: 480px) {
+  .logo strong {
+    font-size: 21px;
+  }
+  .logo strong > span {
+    font-size: 17px;
+  }
+  .hero-copy .eyebrow {
+    font-size: 11px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
