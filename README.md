@@ -1,6 +1,6 @@
 # FSGM Advisory
 
-React, TypeScript, Vite, Tailwind, and Lucide. An organized home page, six educational articles, accessible dropdowns, and locally hosted images/fonts. Published from `firepillmello/FSGM` to **https://fsgmadvisory.com/**.
+React, TypeScript, Vite, Tailwind, and Lucide. An organized home page, six educational articles, accessible dropdowns, and locally hosted images/fonts. Published from `firepillmello/FSGM` to **https://www.fsgmadvisory.com/**.
 
 ## Business settings and future logo changes
 
@@ -53,11 +53,11 @@ CHROMIUM_PATH=/usr/bin/chromium npm run test:production
 
 The first suite checks navigation, disclosures, resources, email-draft behavior, keyboard access, reduced motion, reading sizes, and responsive layouts at 14 widths from 320px to 1920px. The production suite serves the built output and checks root asset URLs, logo loading, canonical metadata, CNAME, sitemap/robots, address, and phone/desktop layouts. The email-enabled test uses a browser-only test address; it does not send email or change saved settings.
 
-## Deployment to fsgmadvisory.com
+## Deployment to www.fsgmadvisory.com
 
 `.github/workflows/deploy.yml` runs on pushes to `main` or manually. It installs locked dependencies and Chromium, builds, runs both test suites, and deploys the `dist` artifact to GitHub Pages only after checks pass.
 
-The repository's Pages custom domain should remain `fsgmadvisory.com` with GitHub Actions as the deployment source. The owner has configured the domain separately. The build uses `site.config.json` for the production URL and root base rather than the old `/FSGM/` project path. Publishing code does not change DNS or issue an HTTPS certificate; GitHub Pages manages those using the configured domain settings.
+The repository's Pages custom domain should remain `www.fsgmadvisory.com` with GitHub Actions as the deployment source. The Squarespace DNS record for this hostname is a CNAME with host `www` and target `firepillmello.github.io`. The GitHub Pages custom domain must also be `www.fsgmadvisory.com`. The bare domain needs separate forwarding or apex DNS records only if it should work too. The build uses `site.config.json` for the production URL and root base rather than the old `/FSGM/` project path. Publishing code does not change DNS or issue an HTTPS certificate; GitHub Pages manages those using the configured domain settings.
 
 After pushing, inspect the Actions deployment result and the live domain. A successful local build or push alone does not establish that the deployment or live HTTPS check succeeded.
 
@@ -77,7 +77,7 @@ The brochure colors are navy `#082C45`, teal `#176276`, deep teal `#0B3E52`, gol
 
 ## Routes and search indexing
 
-Main navigation scrolls within the home page. Examples: `https://fsgmadvisory.com/#/#services` and `https://fsgmadvisory.com/#/#service-0`. Service and audience selections expand existing sections. Resources topics filter the existing resource center. Only full articles have separate reading routes. Old page hash routes redirect to their corresponding sections. Services have no playback or automatic movement.
+Main navigation scrolls within the home page. Examples: `https://www.fsgmadvisory.com/#/#services` and `https://www.fsgmadvisory.com/#/#service-0`. Service and audience selections expand existing sections. Resources topics filter the existing resource center. Only full articles have separate reading routes. Old page hash routes redirect to their corresponding sections. Services have no playback or automatic movement.
 
 Hash routing makes deep links and refreshes reliable on static GitHub Pages. Titles and descriptions update in the browser, but hash routes are not independently indexable HTTP documents, and social crawlers generally see root metadata. The sitemap therefore lists the root HTTP document. Full article-level search/social metadata would require a future prerendered or multi-page approach.
 

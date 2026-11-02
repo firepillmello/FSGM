@@ -18,11 +18,11 @@ test("custom-domain build has root assets, branded metadata, and provided addres
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    "https://fsgmadvisory.com/",
+    "https://www.fsgmadvisory.com/",
   );
   await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
     "content",
-    "https://fsgmadvisory.com/",
+    "https://www.fsgmadvisory.com/",
   );
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute(
     "href",
@@ -40,15 +40,15 @@ test("custom-domain build has root assets, branded metadata, and provided addres
     postalCode: "19403",
     addressCountry: "US",
   });
-  expect(organization.url).toBe("https://fsgmadvisory.com/");
-  expect(readFileSync("dist/CNAME", "utf8").trim()).toBe("fsgmadvisory.com");
+  expect(organization.url).toBe("https://www.fsgmadvisory.com/");
+  expect(readFileSync("dist/CNAME", "utf8").trim()).toBe("www.fsgmadvisory.com");
   const robots = await request.get("/robots.txt");
   expect(robots.ok()).toBeTruthy();
-  expect(await robots.text()).toContain("https://fsgmadvisory.com/sitemap.xml");
+  expect(await robots.text()).toContain("https://www.fsgmadvisory.com/sitemap.xml");
   const sitemap = await request.get("/sitemap.xml");
   expect(sitemap.ok()).toBeTruthy();
   expect(await sitemap.text()).toContain(
-    "<loc>https://fsgmadvisory.com/</loc>",
+    "<loc>https://www.fsgmadvisory.com/</loc>",
   );
   await page.locator("img").evaluateAll(async (images) => {
     for (const image of images) image.loading = "eager";
