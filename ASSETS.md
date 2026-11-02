@@ -8,3 +8,5 @@ The reference is the user-supplied `FSGM_Advisory_Trifold_Print_Ready.pdf`. Its 
 - Fonts: self-hosted DM Sans and Source Serif 4, distributed with their included open font licenses through Fontsource packages.
 
 No third-party image URL is hotlinked. The hero has explicit dimensions and high fetch priority; supporting images load lazily. The brochure itself is not published by this change.
+
+- `public/images/fsgm-logo-mark.png`: transparent, web-ready monogram adapted from the owner's supplied navy-and-gold FSGM logo. The separate wording is rendered as accessible live text. The original/generated working files remain outside the checkout. The active logo and favicon paths are controlled by `site.config.json`; the earlier vector mark is retained as an unused fallback asset.

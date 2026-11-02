@@ -2165,3 +2165,54 @@ footer .eyebrow {
     scroll-behavior: auto;
   }
 }
+/* Replace the logo source and address through site.config.json. */
+.logo .supplied-logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  padding: 3px;
+  border: 0;
+  border-radius: 4px;
+  background: #fff;
+}
+.logo.light .supplied-logo {
+  background: #fff;
+  padding: 5px;
+}
+.business-address {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-style: normal;
+  font-size: 17px;
+  line-height: 1.8;
+}
+.location {
+  align-items: flex-start;
+}
+.location > svg {
+  margin-top: 5px;
+}
+.footer-location.business-address {
+  font-size: 15px;
+}
+.contact-unavailable > svg {
+  color: var(--teal);
+  margin-bottom: 24px;
+}
+.contact-unavailable > p {
+  margin-top: 22px;
+}
+.contact-interest {
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+.email-draft-link {
+  margin-top: 18px;
+}
+@media (max-width: 480px) {
+  .logo .supplied-logo {
+    width: 49px;
+    height: 49px;
+  }
+}

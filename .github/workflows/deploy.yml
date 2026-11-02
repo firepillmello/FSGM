@@ -20,10 +20,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npx playwright install --with-deps chromium
       - run: npm run build
-        env:
-          BASE_PATH: /${{ github.event.repository.name }}/
-          SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+      - run: npm test
+      - run: npm run test:production
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

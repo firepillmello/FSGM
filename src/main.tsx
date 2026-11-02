@@ -15,7 +15,6 @@ import {
   Menu,
   X,
   Landmark,
-  ShieldCheck,
   Sprout,
   HeartHandshake,
   Building2,
@@ -23,6 +22,7 @@ import {
   Search,
   MoveUpRight,
   ChevronDown,
+  Mail,
 } from "lucide-react";
 import {
   site,
@@ -35,6 +35,7 @@ import {
 import "./site.css";
 import { ServicesRail } from "./ServicesRail";
 import { PageFlow } from "./PageFlow";
+import { createEmailDraft } from "./emailDraft";
 function Logo({ light = false }: { light?: boolean }) {
   return (
     <Link
@@ -42,25 +43,13 @@ function Logo({ light = false }: { light?: boolean }) {
       to="/"
       aria-label="FSGM Advisory home"
     >
-      <svg
-        className="lettermark"
-        viewBox="0 0 80 80"
-        fill="none"
-        aria-hidden="true"
-      >
-        <rect
-          className="lettermark-frame"
-          x="3"
-          y="3"
-          width="74"
-          height="74"
-          rx="12"
-        />
-        <path d="M18 34V17H33M18 25H30" />
-        <path d="M61 18H50C44 18 44 26 50 26H56C62 26 62 34 56 34H45" />
-        <path d="M33 49C28 44 17 46 17 57C17 68 29 69 34 63V57H26" />
-        <path d="M46 66V47L54 58L63 47V66" />
-      </svg>
+      <img
+        className="lettermark supplied-logo"
+        src={`${import.meta.env.BASE_URL}${light && site.logo.darkSrc ? site.logo.darkSrc : site.logo.src}`}
+        width="64"
+        height="64"
+        alt={site.logo.alt}
+      />
       <span className="logo-wordmark">
         <strong>
           FSGM<span> Advisory</span>
@@ -782,47 +771,61 @@ function ContactForm() {
       setAssistance(state.service);
   }, [state]);
   const [status, setStatus] = useState("");
-  const [sending, setSending] = useState(false);
-  async function submit(e: React.FormEvent<HTMLFormElement>) {
+  const [draft, setDraft] = useState("");
+  function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     if (!form.reportValidity()) return;
-    if (!site.formEndpoint) {
-      setStatus(
-        "Demo complete. Your entries were validated in this browser only. Nothing was sent or saved. This preview does not request a consultation.",
-      );
-      return;
-    }
-    setSending(true);
     try {
-      const response = await fetch(site.formEndpoint, {
-        method: "POST",
-        body: new FormData(form),
-        headers: { Accept: "application/json" },
-      });
-      if (!response.ok) throw new Error();
-      setStatus("Your inquiry was submitted. Thank you for reaching out.");
-      form.reset();
+      const fields = Object.fromEntries(
+        [...new FormData(form).entries()].map(([key, value]) => [
+          key,
+          String(value),
+        ]),
+      );
+      const mailto = createEmailDraft(site.email, fields);
+      setDraft(mailto);
+      setStatus(
+        "Your draft is ready. Open it in your email app, review it, and send it there. This website has not sent a message.",
+      );
     } catch {
-      setStatus("Your inquiry could not be sent. Please try again later.");
-    } finally {
-      setSending(false);
+      setStatus(
+        "Email contact is temporarily unavailable. Please check back soon.",
+      );
     }
   }
+  if (!site.email)
+    return (
+      <div className="contact-form contact-unavailable">
+        <Mail size={30} strokeWidth={1.4} />
+        <h3>Email contact coming soon.</h3>
+        <p>
+          Our direct email contact will be available here soon. You can find our
+          business address alongside this message.
+        </p>
+        {assistance && (
+          <p className="contact-interest">
+            Your interest: <strong>{assistance}</strong>
+          </p>
+        )}
+      </div>
+    );
   return (
-    <form onSubmit={submit} className="contact-form">
+    <form
+      onSubmit={submit}
+      onChange={() => {
+        setDraft("");
+        setStatus("");
+      }}
+      className="contact-form"
+    >
       <div className="preview-notice">
-        <ShieldCheck size={22} />
+        <Mail size={22} />
         <div>
-          <strong>
-            {site.formEndpoint
-              ? "General inquiries only"
-              : "Preview mode — no information is sent"}
-          </strong>
+          <strong>Send through your own email app</strong>
           <p>
-            {site.formEndpoint
-              ? "Please share only general business contact information."
-              : "This demo validates your entries locally. A production contact service has not been connected."}
+            This form prepares an email draft. Review and send it in your email
+            app; the website does not send or store your message.
           </p>
         </div>
       </div>
@@ -898,24 +901,38 @@ function ContactForm() {
         Please do not include grant documents, financial account details,
         personal client information, or other sensitive records.
       </p>
-      <button className="button" disabled={sending} type="submit">
-        {sending
-          ? "Sending…"
-          : site.formEndpoint
-            ? "Send inquiry"
-            : "Preview inquiry"}
+      <button className="button" type="submit">
+        Prepare email draft
         <ArrowUpRight size={17} />
       </button>
+      {draft && (
+        <a className="button email-draft-link" href={draft}>
+          Open email draft
+          <ArrowUpRight size={17} />
+        </a>
+      )}
       <p role="status" className={status ? "form-status" : ""}>
         {status}
       </p>
       <p className="privacy-note">
-        Privacy: In preview mode, form entries stay in this page’s memory and
-        are not transmitted or stored. If a production form provider is
-        configured, review its privacy terms before submitting. No analytics or
+        Privacy: Your entries stay in this page until you choose to open the
+        draft in your email app. Review the draft and choose Send there. This
+        website does not transmit or store the form entries. No analytics or
         marketing trackers are installed.
       </p>
     </form>
+  );
+}
+function BusinessAddress({ className = "" }: { className?: string }) {
+  return (
+    <address className={`business-address ${className}`}>
+      <span>{site.address.streetAddress}</span>
+      <span>
+        {site.address.addressLocality}, {site.address.addressRegion}{" "}
+        {site.address.postalCode}
+      </span>
+      <span>{site.address.countryName}</span>
+    </address>
   );
 }
 function ContactSection() {
@@ -942,7 +959,7 @@ function ContactSection() {
           </p>
           <div className="location">
             <Landmark size={22} />
-            <span>{site.location}</span>
+            <BusinessAddress />
           </div>
           {site.email && (
             <p>
@@ -993,7 +1010,7 @@ function Footer() {
             <br />
             Behind Public Funding.
           </p>
-          <span className="footer-location">Pennsylvania, United States</span>
+          <BusinessAddress className="footer-location" />
         </div>
         <div>
           <p className="eyebrow">EXPLORE</p>

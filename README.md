@@ -1,89 +1,84 @@
 # FSGM Advisory
 
-A responsive, static React + TypeScript advisory website, built with Vite, Tailwind CSS, Lucide, and React Router. Uses one organized home-page journey, six unique educational articles, resource search/category filtering, and a validated preview contact form.
+React, TypeScript, Vite, Tailwind, and Lucide. An organized home page, six educational articles, accessible dropdowns, and locally hosted images/fonts. Published from `firepillmello/FSGM` to **https://fsgmadvisory.com/**.
 
-## Develop
+## Business settings and future logo changes
 
-Use Node.js 22.12+ (Node 24 also works).
+Edit **`site.config.json`** for the domain, logo paths, address, public email, phone, and optional scheduling URL. These settings are shared by the app and production metadata.
+
+To change the logo later:
+
+1. Add the replacement image to `public/images/`.
+2. Set `logo.src` to its path relative to `public/`, for example `images/logo-v2.png`.
+3. Build and push. The header, footer, favicon, and Organization logo metadata update from the same setting. A new filename also avoids stale favicon caches. `logo.darkSrc` optionally supplies a separate image for the dark footer; otherwise the main logo is displayed on a white plate.
+
+The current logo is a web-ready monogram adaptation of the user-supplied navy/gold FSGM logo, with the business name typeset alongside it. The logo can be replaced without changing the component.
+
+The provided public address is **2123 West Main Street, Norristown, PA 19403, USA**. It appears in contact, footer, and PostalAddress metadata. Do not invent contact details, qualifications, or government affiliations.
+
+## Email inquiries
+
+The owner selected **email drafts** and deferred the public email address. While `email` is empty, contact shows the address and a clear coming-soon message. There is no demo submission or nonfunctional send button.
+
+When ready, set `email` in `site.config.json` to the real public business email. The contact form then enables automatically:
+
+- Visitors complete and validate the form, then choose **Prepare email draft**.
+- **Open email draft** opens their email app with the recipient, subject, and message filled in.
+- They review and send from that app. The website itself does not send or store messages and requires no backend, form-service account, or API key.
+
+The browser must have an email application configured. The business email is also shown as a normal email link. No sensitive grant documents should be entered in the public form.
+
+## Local development and validation
+
+Use Node.js 22.12+ or Node 24.
 
 ```sh
 npm ci
 npm run dev
 npm run build
 npm run preview
-```
-
-Default local project path: `/FSGM/`. Navigation uses hash routes, so article links and browser refreshes work on GitHub Pages without a server rewrite. No database or credentials are required. Fonts are self-hosted through Fontsource packages under their included open font licenses, with system fallbacks. The visual palette follows the supplied FSGM trifold brochure. The hero is an original generated river-community illustration; supporting imagery is extracted from the user-provided brochure. Images are hosted locally, with lazy loading below the fold. See `ASSETS.md` for provenance.
-
-## Edit
-
-- `src/content.ts`: verified business information, contact channels, scheduling URL, navigation, services, industries, and articles. Blank contact values remain hidden. Do not invent credentials, biographies, or contact details.
-- `src/main.tsx`: home sections, navigation, inline disclosures, article routes, form behavior, and metadata.
-- `src/ServicesRail.tsx`: horizontal service rail, manual arrow and swipe controls, selected service details, and contact handoff.
-- `src/site.css`: the single design system, including the brochure palette, larger reading text, responsive layouts, smooth scrolling, hover states, and accessibility preferences.
-- `src/PageFlow.tsx`: one-time scroll entrances that keep text fully visible and cancel motion when reduced motion is requested.
-- `public/brandmark.svg`: original FSGM letter-art mark.
-- `public/favicon.svg`: matching high-contrast favicon.
-
-The form defaults to **preview mode**: entries are validated in-browser and are never sent or saved. To activate production inquiries, configure `site.formEndpoint` with a real HTTPS form service accepting multipart POST and JSON responses, confirm its CORS/spam protection and privacy terms, update the privacy copy, and test delivery. Set `site.schedulingUrl` only to a verified scheduling link. Do not request sensitive documents in this public form.
-
-## GitHub Pages
-
-The website is maintained in `firepillmello/FSGM` on `main`.
-
-1. In repository **Settings → Pages → Build and deployment**, select **GitHub Actions**.
-2. Open Actions and monitor **Deploy FSGM Advisory to GitHub Pages**. It runs on every push to `main` or manually.
-3. Open the URL reported by the successful deployment: the expected project URL is `https://firepillmello.github.io/FSGM/`.
-
-A successful push is not proof that Pages deployment has completed. Check the deployment job before claiming a new version is live.
-
-The workflow derives `BASE_PATH` and `SITE_URL` from the repository identity, so a future repository rename does not require hardcoded deployment changes.
-
-For a manual build targeting an alternative repository name:
-
-```sh
-BASE_PATH=/fsgm-advisory-website/ SITE_URL=https://firepillmello.github.io/fsgm-advisory-website/ npm run build
-```
-
-For custom domains set `BASE_PATH=/` and `SITE_URL` to the verified domain; configure DNS and Pages separately. Build output is `dist/`. Runtime processes are not needed on GitHub Pages.
-
-## Validation
-
-```sh
-npm run build
 npx playwright install chromium
 npm test
-# Or use a preinstalled Chromium:
-CHROMIUM_PATH=/usr/bin/chromium npm test
+npm run test:production
 ```
 
-Browser tests cover same-page navigation, service, audience, and resource-topic dropdown selection, inline service details, manual horizontal scrolling, article deep links, expanded resource filters, legacy redirects, contact validation, preserved form entries, mobile navigation, keyboard access, and reduced-motion support. Responsive checks cover 14 widths from 320px to 1920px. Offscreen service cards are intentionally clipped within their own horizontal rail; the document must not overflow. Tests start a Vite server automatically. No private data is used.
+The default development and production base is **`/`**, matching the custom domain. `npm run build` checks TypeScript, generates `dist/`, and writes canonical/Open Graph/Organization metadata, sitemap, robots, and a 404 fallback. `public/CNAME` is copied to `dist/CNAME`.
 
-## Navigation and content organization
+With preinstalled Chromium:
 
-The primary navigation scrolls to `#top`, `#about`, `#services`, `#who-we-serve`, `#resources`, and `#contact` within the existing home page. With the hash router, a section URL looks like `/FSGM/#/#services`; a selected service looks like `/FSGM/#/#service-0`. Old `/about`, `/services`, `/who-we-serve`, `/resources`, and `/contact` hash routes redirect to those sections, including existing numbered service links.
+```sh
+CHROMIUM_PATH=/usr/bin/chromium npm test
+CHROMIUM_PATH=/usr/bin/chromium npm run test:production
+```
 
-The opening buttons are **Explore Our Services** and **About Us**. Service summaries open one inline detail panel. About and industry details use native expandable disclosures. Resources initially show three articles; **Explore more resources** reveals the full library and filters. Only full articles have separate reading routes because their content is unique. Inquiry links consistently say **Discuss your needs**, and a selected service is carried into the contact form.
+The first suite checks navigation, disclosures, resources, email-draft behavior, keyboard access, reduced motion, reading sizes, and responsive layouts at 14 widths from 320px to 1920px. The production suite serves the built output and checks root asset URLs, logo loading, canonical metadata, CNAME, sitemap/robots, address, and phone/desktop layouts. The email-enabled test uses a browser-only test address; it does not send email or change saved settings.
 
-The service rail is entirely manual: previous/next arrows, native horizontal scrolling, keyboard arrows, and touch swiping are available. No play button, playback state, timer, or automatic movement remains. Reduced-motion preferences disable smooth rail scrolling. The Who We Serve dropdown scrolls to and expands the chosen audience; it does not open another page.
+## Deployment to fsgmadvisory.com
 
+`.github/workflows/deploy.yml` runs on pushes to `main` or manually. It installs locked dependencies and Chromium, builds, runs both test suites, and deploys the `dist` artifact to GitHub Pages only after checks pass.
 
-## Search indexing
+The repository's Pages custom domain should remain `fsgmadvisory.com` with GitHub Actions as the deployment source. The owner has configured the domain separately. The build uses `site.config.json` for the production URL and root base rather than the old `/FSGM/` project path. Publishing code does not change DNS or issue an HTTPS certificate; GitHub Pages manages those using the configured domain settings.
 
-Each route updates its browser title, description, and Open Graph fields. `scripts/seo.mjs` generates Organization schema, canonical metadata, robots.txt, and a sitemap containing the root HTTP document. Hash routes are reliable on Pages but are not separately indexable documents, and social crawlers typically see the root metadata. For full article-level SEO and social previews, a future prerendered or multi-page implementation is recommended. GitHub project `robots.txt` is provided as an artifact; only a host-root robots file controls all crawling.
+After pushing, inspect the Actions deployment result and the live domain. A successful local build or push alone does not establish that the deployment or live HTTPS check succeeded.
 
-No analytics, fake testimonials, fabricated qualifications, or claims of government affiliation are included.
+Optional `BASE_PATH` and `SITE_URL` environment variables can override the build for a separate preview target. Production CI deliberately does not override the configured custom domain.
 
-## Brochure visual direction and story
+## Content and design
 
-Colors are taken from the supplied trifold: navy `#082C45`, teal `#176276`, deep teal `#0B3E52`, gold `#D6B76D`, and warm white `#FCFBF7`. Gold is used decoratively on light backgrounds and for high-contrast accents on navy.
+- `src/content.ts`: services, audiences, articles, navigation, and resource topics; imports shared business settings.
+- `src/main.tsx`: home sections, accessible dropdowns, article routes, logo rendering, and email form.
+- `src/emailDraft.ts`: validates the configured recipient and safely builds the mailto link.
+- `src/ServicesRail.tsx`: manual swipe/arrow browsing and inline service details.
+- `src/site.css`: one design system, brochure palette, responsive layouts, larger text, and focus/hover styles.
+- `src/PageFlow.tsx`: one-time, transform-only entrances; no text is hidden, and reduced-motion preferences cancel animations.
+- `scripts/seo.mjs`: metadata using the shared domain, logo, and address.
 
-About Us focuses on community purpose and the Fiscal Director perspective behind the service. Audience categories belong only in Who We Serve. No founder identity, credentials, or biography are invented.
+The brochure colors are navy `#082C45`, teal `#176276`, deep teal `#0B3E52`, gold `#D6B76D`, and warm white `#FCFBF7`. Primary reading text is at least 18px. About Us explains community purpose and the Fiscal Director perspective; audience categories live in Who We Serve. See `ASSETS.md` for image/font provenance.
 
-## Readability and resource topics
+## Routes and search indexing
 
-Primary reading text is at least 18px across phone, tablet, and desktop layouts. Secondary labels retain a clear hierarchy, and the logo descriptor wraps rather than shrinking on small screens. Public-facing copy uses clear phrases such as responsible funding, spending records, and payment requests, while retaining useful service terms such as Fiscal Director and internal controls with explanations.
+Main navigation scrolls within the home page. Examples: `https://fsgmadvisory.com/#/#services` and `https://fsgmadvisory.com/#/#service-0`. Service and audience selections expand existing sections. Resources topics filter the existing resource center. Only full articles have separate reading routes. Old page hash routes redirect to their corresponding sections. Services have no playback or automatic movement.
 
-The Resources dropdown is generated from `resourceTopics` in `src/content.ts`. Choosing a topic expands and filters the existing resource center, for example `/FSGM/#/#resources-financial-controls`; `/#resources-all` opens the full library. It uses the same keyboard, Escape, outside-click, and mobile behavior as the other dropdowns.
+Hash routing makes deep links and refreshes reliable on static GitHub Pages. Titles and descriptions update in the browser, but hash routes are not independently indexable HTTP documents, and social crawlers generally see root metadata. The sitemap therefore lists the root HTTP document. Full article-level search/social metadata would require a future prerendered or multi-page approach.
 
-Section links scroll smoothly, while direct deep links position immediately. Reduced-motion preferences turn smooth scrolling and entrance animation off. Scroll entrances use transforms only: reading content is never hidden or faded out. Services remain manually controlled; playback has not been reintroduced.
+No analytics, marketing trackers, fake testimonials, invented credentials, or claims of government affiliation are included.

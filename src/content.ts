@@ -1,12 +1,6 @@
+import configuration from "../site.config.json";
 export const site = {
-  name: "FSGM Advisory",
-  descriptor: "Federal & State Grant Management",
-  mission: "Protecting the Purpose Behind Public Funding.",
-  location: "Pennsylvania, United States",
-  email: "",
-  phone: "",
-  schedulingUrl: "",
-  formEndpoint: "",
+  ...configuration,
   navigation: [
     ["Home", "/#top"],
     ["About Us", "/#about"],

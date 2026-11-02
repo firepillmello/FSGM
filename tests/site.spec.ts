@@ -1,4 +1,6 @@
+import { readFileSync } from "node:fs";
 import { test, expect } from "@playwright/test";
+const configuredSite = JSON.parse(readFileSync("site.config.json", "utf8"));
 
 test("home navigation scrolls in place and opening CTAs stay simple", async ({
   page,
@@ -30,7 +32,7 @@ test("home navigation scrolls in place and opening CTAs stay simple", async ({
   expect(errors).toEqual([]);
 });
 
-test("services dropdown selects one inline detail and passes the choice to contact", async ({
+test("services dropdown selects one inline detail and preserves interest at contact", async ({
   page,
 }) => {
   await page.goto("./");
@@ -56,22 +58,15 @@ test("services dropdown selects one inline detail and passes the choice to conta
     .getByRole("link", { name: "Discuss your needs" })
     .click();
   await expect(page).toHaveURL(/#\/#contact$/);
-  await expect(page.locator('select[name="assistance"]')).toHaveValue(
-    "Fractional Fiscal Director Services",
-  );
+  if (configuredSite.email)
+    await expect(page.locator('select[name="assistance"]')).toHaveValue(
+      "Fractional Fiscal Director Services",
+    );
+  else
+    await expect(page.locator(".contact-interest")).toContainText(
+      "Fractional Fiscal Director Services",
+    );
   await expect(page.locator(".contact-form")).toHaveCount(1);
-  await page.getByLabel("Organization name").fill("Saved organization");
-  await page
-    .getByRole("navigation")
-    .getByRole("link", { name: "About Us", exact: true })
-    .click();
-  await page
-    .getByRole("navigation")
-    .getByRole("link", { name: "Contact", exact: true })
-    .click();
-  await expect(page.getByLabel("Organization name")).toHaveValue(
-    "Saved organization",
-  );
 });
 
 test("service rail moves horizontally and closes expanded details", async ({
@@ -150,9 +145,40 @@ test("legacy page URLs redirect to sections and service deep links survive refre
   );
 });
 
-test("contact validates and never sends demo entries", async ({ page }) => {
+test("contact matches the configured email availability", async ({ page }) => {
   await page.goto("./#/#contact");
-  await page.getByRole("button", { name: "Preview inquiry" }).click();
+  if (configuredSite.email) {
+    await expect(page.locator("#contact form")).toHaveCount(1);
+    await expect(
+      page.getByRole("button", { name: "Prepare email draft" }),
+    ).toBeVisible();
+  } else {
+    await expect(
+      page.getByRole("heading", { name: "Email contact coming soon." }),
+    ).toBeVisible();
+    await expect(page.locator("#contact form")).toHaveCount(0);
+    await expect(page.locator('a[href^="mailto:"]')).toHaveCount(0);
+  }
+  await expect(page.locator("#contact address")).toContainText(
+    "2123 West Main Street",
+  );
+  await expect(page.locator("#contact address")).toContainText(
+    "Norristown, PA 19403",
+  );
+});
+
+test("adding a business email enables validation and a draft without sending a message", async ({
+  page,
+}) => {
+  const configuration = JSON.parse(readFileSync("site.config.json", "utf8"));
+  await page.route("**/site.config.json*", (route) =>
+    route.fulfill({
+      contentType: "application/javascript",
+      body: `export default ${JSON.stringify({ ...configuration, email: "test-contact@example.org" })};`,
+    }),
+  );
+  await page.goto("./#/#contact");
+  await page.getByRole("button", { name: "Prepare email draft" }).click();
   await expect(page.locator("input:invalid").first()).toBeVisible();
   await page.getByLabel("Organization name").fill("Community Example");
   await page.getByLabel("Contact person").fill("Test Person");
@@ -163,14 +189,22 @@ test("contact validates and never sends demo entries", async ({ page }) => {
   await page.getByLabel("General assistance").selectOption("Not sure yet");
   await page
     .getByLabel("How can we help")
-    .fill("Looking for budget reporting support.");
+    .fill("Looking for clear budget reports.");
   const posts: string[] = [];
   page.on("request", (request) => {
     if (request.method() === "POST") posts.push(request.url());
   });
-  await page.getByRole("button", { name: "Preview inquiry" }).click();
+  await page.getByRole("button", { name: "Prepare email draft" }).click();
+  const href = await page
+    .getByRole("link", { name: "Open email draft", exact: true })
+    .getAttribute("href");
+  expect(href).toContain("mailto:test-contact@example.org?");
+  expect(decodeURIComponent(href!)).toContain("Community Example");
+  expect(decodeURIComponent(href!)).toContain(
+    "Looking for clear budget reports.",
+  );
   await expect(page.getByRole("status")).toContainText(
-    "Nothing was sent or saved",
+    "This website has not sent a message",
   );
   expect(posts).toEqual([]);
 });

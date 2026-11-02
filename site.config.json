@@ -1,0 +1,24 @@
+{
+  "name": "FSGM Advisory",
+  "descriptor": "Federal & State Grant Management",
+  "mission": "Protecting the Purpose Behind Public Funding.",
+  "location": "Norristown, Pennsylvania",
+  "url": "https://fsgmadvisory.com/",
+  "logo": {
+    "src": "images/fsgm-logo-mark.png",
+    "darkSrc": "",
+    "alt": "FSGM Advisory navy and gold logo"
+  },
+  "address": {
+    "streetAddress": "2123 West Main Street",
+    "addressLocality": "Norristown",
+    "addressRegion": "PA",
+    "postalCode": "19403",
+    "addressCountry": "US",
+    "countryName": "USA"
+  },
+  "contactMode": "email",
+  "email": "",
+  "phone": "",
+  "schedulingUrl": ""
+}
