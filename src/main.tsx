@@ -23,6 +23,7 @@ import {
   MoveUpRight,
   ChevronDown,
   Mail,
+  Phone,
 } from "lucide-react";
 import {
   site,
@@ -968,7 +969,7 @@ function ContactSection() {
           )}
           {site.phone && (
             <p>
-              <a href={`tel:${site.phone}`}>{site.phone}</a>
+              <a href={`tel:${site.phone.replace(/[^+\\d]/g, "")}`}>{site.phone}</a>
             </p>
           )}
           {site.schedulingUrl && (
@@ -1011,6 +1012,18 @@ function Footer() {
             Behind Public Funding.
           </p>
           <BusinessAddress className="footer-location" />
+          <div className="footer-contact" aria-label="Contact FSGM Advisory">
+            {site.email && (
+              <a href={`mailto:${site.email}`}>
+                <Mail size={16} aria-hidden="true" /> {site.email}
+              </a>
+            )}
+            {site.phone && (
+              <a href={`tel:${site.phone.replace(/[^+\\d]/g, "")}`}>
+                <Phone size={16} aria-hidden="true" /> {site.phone}
+              </a>
+            )}
+          </div>
         </div>
         <div>
           <p className="eyebrow">EXPLORE</p>
