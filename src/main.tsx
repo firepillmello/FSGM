@@ -969,7 +969,7 @@ function ContactSection() {
           )}
           {site.phone && (
             <p>
-              <a href={`tel:${site.phone.replace(/[^+\\d]/g, "")}`}>{site.phone}</a>
+              <a href={`tel:${site.phone.replace(/[^+\d]/g, "")}`}>{site.phone}</a>
             </p>
           )}
           {site.schedulingUrl && (
@@ -1019,7 +1019,7 @@ function Footer() {
               </a>
             )}
             {site.phone && (
-              <a href={`tel:${site.phone.replace(/[^+\\d]/g, "")}`}>
+              <a href={`tel:${site.phone.replace(/[^+\d]/g, "")}`}>
                 <Phone size={16} aria-hidden="true" /> {site.phone}
               </a>
             )}
